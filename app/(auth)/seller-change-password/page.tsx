@@ -12,13 +12,14 @@ import {
 } from "@/lib/validations/seller";
 import { resetPassword, verifyResetToken } from "@/app/actions/auth";
 import { Logo } from "@/components/MyLogo";
-
+import { motion } from "framer-motion";
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const token = searchParams.get("token");
 
   const {
     register,
@@ -29,30 +30,9 @@ export default function ResetPasswordPage() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  useEffect(() => {
-    //recupere le token en paramètre sur l'url
-    const token = searchParams.get("token");
-    if (!token) {
-      //setValue("token", token);
-
-      //verifie l'existence du token
-      verifyToken(/* token */);
-    } else {
-      setTokenValid(false);
-    }
-  }, [searchParams, setValue]);
-
-  //verifie la validité du token
-  const verifyToken = async (/* token: string */) => {
-    try {
-      const result = { error: "" }; /* await verifyResetToken(token); */
-      setTokenValid(true /* !result?.error */);
-      if (result?.error) setError(result.error);
-    } catch (err) {
-      setTokenValid(false);
-      setError("Error verifying token");
-    }
-  };
+  if (token) {
+    setValue("token", token);
+  }
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     try {
@@ -72,46 +52,28 @@ export default function ResetPasswordPage() {
     }
   };
 
-  if (tokenValid === null) {
-    return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4">Loading...</h1>
-      </div>
-    );
-  }
-
-  if (!tokenValid) {
-    return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4">Invalid Token</h1>
-        <p className="mb-4">
-          The password reset link is invalid or has expired. Please request a
-          new one.
-        </p>
-        <Link
-          href="/seller-forgot-password"
-          className="w-full block text-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
-        >
-          Request New Link
-        </Link>
-      </div>
-    );
-  }
-
   if (success) {
     return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4">Password Reset Successful</h1>
-        <p className="mb-4">
-          Your password has been successfully updated. You can now log in with
-          your new password.
-        </p>
-        <Link
-          href="/login"
-          className="w-full block text-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+      <div className="flex items-center justify-center w-full h-screen">
+        <Logo />
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-md mx-auto p-6 bg-white rounded-lg loginShaddow "
         >
-          Go to Login
-        </Link>
+          <h1 className="text-2xl font-bold mb-4">Password Reset Successful</h1>
+          <p className="mb-4">
+            Your password has been successfully updated. You can now log in with
+            your new password.
+          </p>
+          <Link
+            href="/seller-login"
+            className="w-full block text-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+          >
+            Go to Login
+          </Link>
+        </motion.div>
       </div>
     );
   }
@@ -119,7 +81,13 @@ export default function ResetPasswordPage() {
   return (
     <div className="flex items-center justify-center w-full h-screen">
       <Logo />
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="max-w-md mx-auto p-6 bg-white rounded-lg loginShaddow "
+      >
         <h1 className="text-2xl font-bold mb-6">Reset Password</h1>
 
         {error && (
@@ -129,7 +97,14 @@ export default function ResetPasswordPage() {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <input type="hidden" {...register("token")} />
+          <div>
+            <input type="hidden" {...register("token")} />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.token?.message}
+              </p>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -182,7 +157,7 @@ export default function ResetPasswordPage() {
             {isSubmitting ? "Resetting..." : "Reset Password"}
           </button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }

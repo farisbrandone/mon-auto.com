@@ -4,7 +4,7 @@ import React from "react";
 
 function MyLogo() {
   return (
-    <div className="absolute top-1 left-1 flex items-center w-full shadow-2xs ">
+    <div className="absolute top-1 left-1 flex items-center w-full shadow-2xs bg-white ">
       <Link href="/">
         <Image
           alt=""
@@ -37,4 +37,20 @@ function Logo() {
   );
 }
 
-export { Logo };
+function Logo2() {
+  return (
+    <div className="sm:w-full">
+      <Link href="/" className="">
+        <Image
+          alt=""
+          width={100}
+          height={100}
+          src="/logo.png"
+          className="bg-black "
+        />
+      </Link>
+    </div>
+  );
+}
+
+export { Logo, Logo2 };

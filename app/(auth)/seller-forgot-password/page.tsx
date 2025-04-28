@@ -9,7 +9,7 @@ import { ForgotPasswordFormData } from "@/types/auth";
 import Link from "next/link";
 import { forgotPassword } from "@/app/actions/auth";
 import { Logo } from "@/components/MyLogo";
-
+import { motion } from "framer-motion";
 const ForgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
@@ -33,7 +33,8 @@ export default function ForgotPasswordPage() {
     try {
       setIsSubmitting(true);
       setError(null);
-      const result = await forgotPassword(data);
+      const email = data.email;
+      const result = await forgotPassword(email);
 
       if (result?.error) {
         setError(result.error);
@@ -51,18 +52,23 @@ export default function ForgotPasswordPage() {
     return (
       <div className="flex items-center justify-center w-full h-screen">
         <Logo />
-        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-md mx-auto p-6 bg-white rounded-lg loginShaddow "
+        >
           <h1 className="text-2xl font-bold mb-4">Check Your Email</h1>
           <p className="mb-4">
             We've sent a password reset link to your email address.
           </p>
           <Link
-            href="/login"
+            href="/seller-login"
             className="w-full block text-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
           >
             Return to Login
           </Link>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -70,7 +76,12 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Logo />
-      <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-md">
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="max-w-md w-full p-8 bg-white rounded-lg loginShaddow "
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">Forgot Password</h2>
         {error && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
@@ -106,11 +117,11 @@ export default function ForgotPasswordPage() {
           </button>
         </form>
         <div className="mt-4 text-center">
-          <Link href="/login" className="text-blue-600 hover:underline">
+          <Link href="/seller-login" className="text-blue-600 hover:underline">
             Back to Login
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

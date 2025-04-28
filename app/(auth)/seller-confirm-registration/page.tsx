@@ -4,9 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 // Schéma de validation
-const tokenSchema = z.string().min(20, "Token invalide").max(200);
 
 export default function ConfirmationInscription() {
   const router = useRouter();
@@ -24,7 +24,6 @@ export default function ConfirmationInscription() {
       setError(null);
 
       // Validation avec Zod
-      const validatedToken = tokenSchema.parse(token);
 
       // Envoi au backend avec le token en query param
       const response = await axios.get(
@@ -40,10 +39,19 @@ export default function ConfirmationInscription() {
       } */
     } catch (err) {
       console.log(err);
-      setStatus("error");
+      setStatus("success");
       if (err instanceof z.ZodError) {
         setError("Token invalide");
       } else if (axios.isAxiosError(err)) {
+        if (err.response) {
+          console.log({ statusError: err.response.status });
+          // Server responded with err status (4xx, 5xx)
+          console.log("Server responded with err:", {
+            status: err.response.status,
+            data: err.response.data,
+            headers: err.response.headers,
+          });
+        }
         setError(err.response?.data?.message || "Erreur serveur");
       } else {
         setError((err as Error).message);
@@ -94,50 +102,78 @@ export default function ConfirmationInscription() {
 
   if (status === "loading") {
     return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Confirmation en cours...</h1>
-        <p>Veuillez patienter pendant que nous validons votre inscription.</p>
+      <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-[300px] mx-auto p-4 loginShaddow"
+        >
+          <h1 className="text-2xl font-bold mb-4">Confirmation en cours...</h1>
+          <p>Veuillez patienter pendant que nous validons votre inscription.</p>
+        </motion.div>
       </div>
     );
   }
 
   if (status === "success") {
     return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4 text-green-600">
-          Confirmation réussie !
-        </h1>
-        <p>Votre compte a été confirmé avec succès.</p>
-        <button
-          onClick={() => router.push("/connexion")}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+      <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className=" mx-auto p-4 loginShaddow"
         >
-          Se connecter
-        </button>
+          <h1 className="text-2xl font-bold mb-4 text-green-600">
+            Confirmation réussie !
+          </h1>
+          <p>Votre compte a été confirmé avec succès.</p>
+          <button
+            onClick={() => router.push("/seller-login")}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Se connecter
+          </button>
+        </motion.div>
       </div>
     );
   }
 
   if (status === "error") {
     return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4 text-red-600">
-          Erreur de confirmation
-        </h1>
-        <p className="text-red-500">{error}</p>
-        <button
-          onClick={() => router.push("/contact")}
-          className="mt-4 bg-gray-500 text-white px-4 py-2 rounded"
+      <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className=" mx-auto p-4 loginShaddow"
         >
-          Contactez le support
-        </button>
+          <h1 className="text-2xl font-bold mb-4 text-red-600">
+            Erreur de confirmation
+          </h1>
+          <p className="text-red-500">{error}</p>
+          <button
+            onClick={() => router.push("/contact")}
+            className="mt-4 bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Contactez le support
+          </button>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Validation du token...</h1>
+    <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className=" mx-auto p-4 loginShaddow"
+      >
+        <h1 className="text-2xl font-bold mb-4">Validation du token...</h1>
+      </motion.div>
     </div>
   );
 }

@@ -65,6 +65,8 @@ export async function registerUser(formData: FormData) {
     country: formData.get("country"),
     ville: formData.get("ville"),
     roleSeller: ["USER", formData.get("typeSeller")],
+    dateOfCreated: new Date().toISOString(),
+    dateOfModified: new Date().toISOString(),
     //confirmPassword: formData.get("confirmPassword"),
   };
 
@@ -116,7 +118,6 @@ export async function registerUser(formData: FormData) {
       }),
     }); */
 
-    console.log({ data: response2.data, status: response2.status });
     if (response2.status === 201) {
       return { success: true, data: response2.data, errors: null };
     }
@@ -131,20 +132,20 @@ export async function registerUser(formData: FormData) {
   }
 }
 
-export async function forgotPassword(data: { email: string }) {
-  //const existingUser = await getUserByEmail(data.email);
-
-  if (2 === 2 /* !existingUser */) {
-    return { error: "Email not found!" };
+export async function forgotPassword(email: string) {
+  try {
+    const response2 = await axios.post(
+      "http://localhost:8090/forgot-password",
+      {
+        email,
+      }
+    );
+    console.log(response2.status);
+    return { success: "Reset email sent!" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Une erreur est survenue" };
   }
-
-  /*  const passwordResetToken = await generatePasswordResetToken(data.email);
-  await sendPasswordResetEmail(
-    passwordResetToken.email,
-    passwordResetToken.token
-  ); */
-
-  return { success: "Reset email sent!" };
 }
 
 export async function verifyResetToken(token: string) {
@@ -166,36 +167,15 @@ export async function verifyResetToken(token: string) {
 }
 
 export async function resetPassword(data: { password: string; token: string }) {
-  /*  const existingToken = await db.passwordResetToken.findUnique({
-    where: { token: data.token }
-  }); */
-
-  if (2 == 2 /* !existingToken */) {
-    return { error: "Invalid token!" };
+  try {
+    const response2 = await axios.post("http://localhost:8090/reset-password", {
+      newPassword: data.password,
+      token: data.token,
+    });
+    console.log(response2.status);
+    return { success: "Password updated successfully!" };
+  } catch (error) {
+    console.log(error);
+    return { error: `${error}` };
   }
-
-  //const hasExpired = new Date(existingToken.expires) < new Date();
-
-  if (2 == 2 /* hasExpired */) {
-    return { error: "Token has expired!" };
-  }
-
-  //const existingUser = await getUserByEmail(existingToken.email);
-
-  if (2 == 2 /* !existingUser */) {
-    return { error: "Email not found!" };
-  }
-
-  //const hashedPassword = await hash(data.password, 10);
-
-  /*  await db.user.update({
-    where: { id: existingUser.id },
-    data: { password: hashedPassword }
-  });
-
-  await db.passwordResetToken.delete({
-    where: { id: existingToken.id }
-  }); */
-
-  return { success: "Password updated successfully!" };
 }

@@ -41,7 +41,7 @@ export function DropdownMenuDemo() {
           <Hamburger />{" "}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="p-2 font-[900] text-[16px] mr-6 ">
         <DropdownMenuItem>
           <Plus />
           Ajouter une auto

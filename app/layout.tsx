@@ -10,7 +10,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Mon auto.com",
   description:
-    "Le site de référence pour l'achat et la vente de véhicules neuf et d'occasion",
+    "Le site de référence pour l'achat et la vente de véhicule neuf et d'occasion",
 };
 
 export default function RootLayout({

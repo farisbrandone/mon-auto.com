@@ -11,6 +11,39 @@ import {
 } from "../constants/carProperties";
 import { getNameList } from "country-list";
 
+export interface autoState {
+  id: String;
+  code: string;
+  carteGriseUrl: string;
+  pvControleTechniqueUrl: string;
+  prix: string;
+  devise: string;
+  marques: string;
+  typesCarrosserie: string;
+  anneeDeFabrication: string;
+  categorie: string;
+  typeCarburant: string;
+  typeMoteur: string;
+  dateOfCreated: string;
+  dateOfModified: string;
+  kilometrage: string;
+  kilometrageUnit: string;
+  typeTransmission: string;
+  lastMaintenanceDate: string;
+  typeDeTrainConducteur: string;
+  nbreDePlace: 0;
+  nbreDePorte: 0;
+  statusOfAuto: string;
+  villeDuBien: string;
+  acceptsTerms: false;
+  immatriculation: string;
+  model: string;
+  couleurExt: string;
+  couleurInt: string;
+  imagesAuto: string;
+  seller: string;
+}
+
 const countries = Object.keys(getNameList());
 export const UserType = z.enum(["PARTICULIER", "ENTREPRISE"]);
 export const typeDoc = z.enum(["PASSPORT", "CNI"]);
@@ -18,9 +51,23 @@ export const UserStatus = z.enum(["ACTIVATE", "DESACTIVATE"]);
 
 export const SellerSchema = z.object({
   marques: z.string(z.enum(MARQUES)).min(1, "Sélectionnez au moins une marque"),
+  model: z.string().min(1, "Doit contenir au moins un caractères"),
+
+  villeDuBien: z
+    .string()
+    .min(1, "Doit contenir au moins un caractères")
+    .optional(),
   typesCarrosserie: z
     .string(z.enum(TYPES_CARROSSERIE))
     .min(1, "Sélectionnez au moins un type")
+    .optional(),
+  couleurExt: z
+    .string()
+    .min(1, "Doit contenir au moins un caractères")
+    .optional(),
+  couleurInt: z
+    .string()
+    .min(1, "Doit contenir au moins un caractères")
     .optional(),
   typeCarburant: z
     .string(z.enum(FUEL_TYPES))
@@ -52,6 +99,19 @@ export const SellerSchema = z.object({
   prix: z
     .number()
     .min(0, "Le prix ne doit pas etre un nombre et doit etre supérieur à zero"),
+  conso100kmVille: z
+    .number()
+    .min(0, "Le prix ne doit pas etre un nombre et doit etre supérieur à zero")
+    .optional(),
+  conso100kmAutoRoute: z
+    .number()
+    .min(0, "Le prix ne doit pas etre un nombre et doit etre supérieur à zero")
+    .optional(),
+  tailleDuMoteur: z
+    .number()
+    .min(0, "Le prix ne doit pas etre un nombre et doit etre supérieur à zero")
+    .optional(),
+
   devise: z.enum(CURRENCIES),
   anneeDeFabrication: z
     .date()
@@ -211,3 +271,115 @@ export const resetPasswordSchema = z
   });
 
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
+export const contactSchema = z.object({
+  nom: z.string().min(3, "Le nom est requis et doit avoir au moins 3 lettres"),
+  email: z.string().email("Entrer un email valide"),
+  prenom: z.string().optional(),
+  telephone: z.string().optional(),
+  message: z.string().optional(),
+});
+
+export type contactForm = z.infer<typeof contactSchema>;
+
+export const searchSchema = z
+  .object({
+    marques: z.string(z.enum(MARQUES)).optional(),
+    typesCarrosserie: z.string(z.enum(TYPES_CARROSSERIE)).optional(),
+    selectedColor: z.string().optional(),
+    typeCarburant: z.string(z.enum(FUEL_TYPES)).optional(),
+    typeMoteur: z.string(z.enum(TYPES_MOTEUR)).optional(),
+    typeTransmission: z.string(z.enum(TRANSMISSION_TYPES)).optional(),
+    PrixMin: z.preprocess((val) => {
+      const num = Number(val);
+      return isNaN(num) ? null : num;
+    }, z.number().nullable().optional()),
+    PrixMax: z.preprocess((val) => {
+      const num = Number(val);
+      return isNaN(num) ? null : num;
+    }, z.number().nullable().optional()),
+    anneeMin: z.preprocess((val) => {
+      const num = Number(val);
+      return isNaN(num) ? null : num;
+    }, z.number().nullable().optional()),
+    anneeMax: z.preprocess((val) => {
+      const num = Number(val);
+      return isNaN(num) ? null : num;
+    }, z.number().nullable().optional()),
+    kilometrageMin: z.preprocess((val) => {
+      // Handle empty string or invalid numbers
+      const num = Number(val);
+      return isNaN(num) ? null : num;
+    }, z.number().nullable().optional()),
+    kilometrageMax: z.preprocess((val) => {
+      const num = Number(val);
+      return isNaN(num) ? null : num;
+    }, z.number().nullable().optional()),
+    keyword: z.string().optional(),
+    villeDuBien: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (!!data.PrixMax && !!data.PrixMin) {
+        return data.PrixMax > data.PrixMin;
+      } else return true;
+    },
+    {
+      message: "Prix max doit etre superieur au prix mini",
+      path: ["PrixMax"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (!!data.kilometrageMax && !!data.kilometrageMin) {
+        return data.kilometrageMax > data.kilometrageMin;
+      } else return true;
+    },
+    {
+      message: "Kilometrage max doit etre superieur au kilometrage min",
+      path: ["kilometrageMax"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (!!data.anneeMax && !!data.anneeMin) {
+        return data.anneeMax > data.anneeMin;
+      } else return true;
+    },
+    {
+      message: "L'année max doit etre superieur à l'année mini",
+      path: ["anneeMax"],
+    }
+  );
+/*  .refine(
+    (val) => {
+      if (!val.kilometrageMin) {
+        console.log({ nan: val });
+       
+         return !isNaN(val.kilometrageMin); 
+      }
+    },
+    {
+      message: "Valeur numérique invalide",
+    }
+  ); */
+
+export type searchForm = z.infer<typeof searchSchema>;
+
+/* 
+marques
+typesCarrosserie
+anneeMin
+anneeMax
+kilometrageMin
+kilometrageMax
+PrixMin
+PrixMax
+typeMoteur
+typeCarburant
+selectedColor
+keyword
+
+
+
+*/
