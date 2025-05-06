@@ -1,34 +1,69 @@
-// app/inscription-vendeur/page.tsx
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFormState } from "react-hook-form";
-import { SellerSchema, SellerFormData } from "@/lib/validations/seller";
+import React, {
+  ChangeEvent,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+import { useParams, useRouter } from "next/navigation";
+import { AutoReducer, AutoState } from "./autoReducer";
 import {
-  MARQUES,
-  TYPES_CARROSSERIE,
-  FUEL_TYPES,
-  TRANSMISSION_TYPES,
-  TYPE_TRAIN_CONDUCTEUR,
-  TYPES_MOTEUR,
-  CURRENCIES,
-  MILEAGE_UNITS,
-} from "@/lib/constants/carProperties";
-import { registerSeller } from "@/app/actions/actions"; // À implémenter
-import Image from "next/image";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+  deleteImage,
+  deleteSellerAuto,
+  getImageAuto,
+  getSingleAutoDataAsync,
+  getUserDataAsync,
+  updateSellerAuto,
+} from "@/app/actions/actions";
+import {
+  SellerUpdateFormData,
+  SellerUpdateSchema,
+} from "@/lib/validations/seller";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import MyLogo from "@/components/MyLogo";
-import { CalendarIcon } from "@heroicons/react/20/solid";
-import { Controller } from "react-hook-form";
-import DatePicker from "react-datepicker";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 import "react-datepicker/dist/react-datepicker.css";
 import VehicleColorPicker, { ColorOption } from "@/components/SelectColors2";
 import SelectCity, { CityProps } from "@/components/SelectCity";
 import { motion } from "framer-motion";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
-import { useRouter } from "next/navigation";
-import Footer from "@/components/Footer";
-export default function AddAutoPage() {
+import { toast } from "sonner";
+import {
+  CURRENCIES,
+  FUEL_TYPES,
+  MARQUES,
+  MILEAGE_UNITS,
+  TRANSMISSION_TYPES,
+  TYPE_TRAIN_CONDUCTEUR,
+  TYPES_CARROSSERIE,
+  TYPES_MOTEUR,
+} from "@/lib/constants/carProperties";
+import DatePicker from "react-datepicker";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import axios from "axios";
+
+const initialState = {} as AutoState;
+
+export default function DetailBackofficeAuto() {
+  const { slug } = useParams();
+  const [autoState, dispatch] = useReducer(AutoReducer, initialState);
+  const [loading, setLoading] = useState(false);
+  const [loadingFail, setLoadingFail] = useState(false);
+  const [auto, setAuto] = useState<SellerUpdateFormData | undefined>();
+  const [deleteData, setDeleteData] = useState(false);
+  const [allImages, setAllImages] = useState<{ url: string; id: string }[]>([]);
   const {
     register,
     handleSubmit,
@@ -37,14 +72,12 @@ export default function AddAutoPage() {
     watch,
     setValue,
     reset,
-  } = useForm<SellerFormData>({
-    resolver: zodResolver(SellerSchema),
+  } = useForm<SellerUpdateFormData>({
+    resolver: zodResolver(SellerUpdateSchema),
     defaultValues: {
       lastMaintenanceDate: new Date(),
     },
   });
-
-  console.log(errors);
 
   const [autreAuto, setAutreAuto] = useState("");
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
@@ -52,9 +85,11 @@ export default function AddAutoPage() {
     null
   );
   const [selectedCity, setSelectedCity] = useState<CityProps | null>(null);
+  const [openDialogAuto, setOpenDialogAuto] = useState(false);
+  const [dateOfCreated, setDateOfCreated] = useState("");
   const carte_grise = watch("carteGrise");
   const pv_controle_technique = watch("pvControleTechnique");
-  const images_auto = watch("imagesAuto") || [];
+  const [deleteStateImage, setDeleteStateImage] = useState(false);
   const selectedCurrency = watch("devise");
   const mileageUnit = watch("kilometrageUnit");
   const marques = watch("marques");
@@ -68,15 +103,15 @@ export default function AddAutoPage() {
   };
 
   const handleCouleurExt = (value: string) => {
-    console.log({ value });
     setValue("couleurExt", value);
   };
   const handleCouleurInt = (value: string) => {
-    console.log({ value });
     setValue("couleurInt", value);
   };
 
-  const onSubmit = async (data: SellerFormData) => {
+  const onSubmit = async (data: SellerUpdateFormData) => {
+    console.log("pppp");
+
     const formData = new FormData();
 
     //formData.set("companyName", data.companyName);
@@ -110,6 +145,7 @@ export default function AddAutoPage() {
       "typesCarrosserie",
       data.typesCarrosserie ? data.typesCarrosserie : ""
     );
+    formData.set("dateOfCreated", dateOfCreated as string);
     formData.set("typeCarburant", data.typeCarburant.toUpperCase());
     formData.set("prix", data.prix.toString());
     formData.set("devise", data.devise);
@@ -149,8 +185,8 @@ export default function AddAutoPage() {
     formData.set("couleurExt", data.couleurExt ? data.couleurExt : "");
     formData.set("typeMoteur", data.typeMoteur);
     formData.set("statusOfAuto", data.statusOfAuto);
-    formData.set("pvControleTechnique", data.pvControleTechnique as Blob);
-    formData.set("carteGrise", data.carteGrise as Blob);
+    formData.set("pvControleTechnique", data.pvControleTechnique);
+    formData.set("carteGrise", data.carteGrise);
     formData.set(
       "anneeDeFabrication",
       data.anneeDeFabrication ? data.anneeDeFabrication.toUTCString() : ""
@@ -168,7 +204,7 @@ export default function AddAutoPage() {
       let i: number = 0;
       console.log(data.imagesAuto);
       for (let image of data.imagesAuto) {
-        formData.set("imagesAuto" + i, image as Blob);
+        formData.set("imagesAuto" + i, JSON.stringify(image));
         i++;
       }
       formData.set("size_image", data.imagesAuto.length.toString());
@@ -180,28 +216,150 @@ export default function AddAutoPage() {
       formData.set("acceptsTerms", "off");
     }
     /* === "on" */ try {
-      const result = await registerSeller(formData);
+      const result = await updateSellerAuto(formData, slug as string);
       if (result.token) {
-        console.log("lolo");
         const val = JSON.stringify(result.token);
         localStorage.setItem("mon-auto-token", val);
       }
       reset();
-      setValue("devise", "FCFA");
-      setValue("kilometrageUnit", "km");
+      toast.success("L'auto a été mis a jour avec success");
+      router.back();
       //Rediriger ou afficher un message de succès
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
+      toast.error("Une erreur est survenue pendant la suppression");
       // Afficher une erreur à l'utilisateur
     }
   };
 
-  useEffect(() => {
-    if (!localStorage.getItem("mon-auto-token")) {
-      router.push("/seller-signup");
+  const deleteAuto = async () => {
+    const token = JSON.parse(localStorage.getItem("mon-auto-token") as string);
+    try {
+      setDeleteData(true);
+      const result = await deleteSellerAuto(slug as string, token);
+      if (result.token) {
+        const val = JSON.stringify(result.token);
+        localStorage.setItem("mon-auto-token", val);
+      }
+      toast.success("L'auto a été supprimer avec success");
+      setDeleteData(false);
+      setOpenDialogAuto(false);
+      router.back();
+    } catch (error) {
+      setDeleteData(false);
+      toast.error("Une erreur est survenue pendant la suppression");
+      setOpenDialogAuto(false);
     }
+  };
+
+  const deleteMyImage = async (id: string, index: number) => {
+    const token = JSON.parse(localStorage.getItem("mon-auto-token") as string);
+    try {
+      setDeleteStateImage(true);
+      const result = await deleteImage(id, token);
+      if (result.token) {
+        const val = JSON.stringify(result.token);
+        localStorage.setItem("mon-auto-token", val);
+      }
+      const newFiles = [...allImages];
+      newFiles.splice(index, 1);
+      setValue("imagesAuto", newFiles);
+      setAllImages(newFiles);
+      setDeleteStateImage(false);
+    } catch (error) {
+      toast.error("Une erreur est survenue pendant la suppression");
+      setDeleteStateImage(false);
+    }
+  };
+
+  useEffect(() => {
+    const getAutoWithId = async () => {
+      try {
+        setLoading(true);
+        const response = await getSingleAutoDataAsync(slug as string);
+        const responseImg = await getImageAuto(slug as string);
+        console.log(responseImg);
+        setValue("imagesAuto", [...responseImg.data]);
+        setAllImages([...responseImg.data]);
+        const newAutos = response.data;
+        console.log(newAutos);
+        setAuto(newAutos);
+        setValue("marques", newAutos.marques);
+        setValue("anneeDeFabrication", new Date(newAutos.anneeDeFabrication));
+        setValue("carteGrise", newAutos.carteGriseUrl);
+        setValue("conso100kmAutoRoute", newAutos.conso100kmAutoRoute);
+        setValue("conso100kmVille", newAutos.conso100kmVille);
+        setValue("couleurExt", newAutos.couleurExt);
+        setValue("couleurInt", newAutos.couleurInt);
+        newAutos.couleurExt &&
+          setSelectedColor({
+            label: newAutos.couleurExt?.split("-")[0],
+            value: newAutos.couleurExt?.split("-")[1],
+          });
+        newAutos.couleurInt &&
+          setSelectedColor2({
+            label: newAutos.couleurInt?.split("-")[0],
+            value: newAutos.couleurInt?.split("-")[1],
+          });
+        setValue("devise", newAutos.devise);
+        setValue("immatriculation", newAutos.immatriculation);
+        setValue("kilometrage", newAutos.kilometrage);
+        setValue("kilometrageUnit", newAutos.kilometrageUnit);
+        setValue("lastMaintenanceDate", new Date(newAutos.lastMaintenanceDate));
+        setValue("model", newAutos.model);
+        setValue("nbreDePlace", newAutos.nbreDePlace);
+        setValue("nbreDePorte", newAutos.nbreDePorte);
+        setValue("prix", newAutos.prix);
+        setValue("pvControleTechnique", newAutos.pvControleTechniqueUrl);
+        setValue("statusOfAuto", newAutos.statusOfAuto);
+        setValue("tailleDuMoteur", newAutos.tailleDuMoteur);
+
+        setValue("typeDeTrainConducteur", newAutos.typeDeTrainConducteur);
+
+        const dd = newAutos.typeCarburant;
+        const typcarb =
+          dd === "ESSENCE"
+            ? "Essence"
+            : dd === "DIESEL"
+            ? "Diesel"
+            : dd === "HYBRIDE"
+            ? "Hybride"
+            : dd === "ELECTRIQUE"
+            ? "Electrique"
+            : "GPL";
+        setValue("typeCarburant", typcarb);
+        setValue("typeMoteur", newAutos.typeMoteur);
+
+        const toto = newAutos.typeTransmission;
+        const trans =
+          toto === "TRANSMISSION_MANUELLE"
+            ? "Manuelle"
+            : toto === "TRANSMISSION_AUTOMATIQUE"
+            ? "Automatique"
+            : "Semi_automatique";
+        setValue("typeTransmission", trans);
+        setValue("typesCarrosserie", newAutos.typesCarrosserie);
+        setValue("villeDuBien", newAutos.villeDuBien);
+        newAutos.villeDuBien && setSelectedCity({ city: newAutos.villeDuBien });
+        setDateOfCreated(newAutos.dateOfCreated);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+        setLoadingFail(true);
+      }
+    };
+
+    getAutoWithId();
   }, []);
 
+  console.log(errors);
+  console.log(watch("imagesAuto"));
+  /*  if (!watch("imagesAuto")) {
+    if (auto?.imagesAuto) {
+      setValue("imagesAuto", [...auto?.imagesAuto]);
+    }
+  } */
   return (
     <div className="max-w-2xl mx-auto my-10 p-6 bg-white">
       <MyLogo />
@@ -523,7 +681,7 @@ export default function AddAutoPage() {
             </div>
 
             {/* Champ Date de mise en circulation */}
-            <div className="w-full">
+            <div className="">
               <label
                 htmlFor="registrationDate"
                 className="block text-sm font-medium text-gray-700"
@@ -554,7 +712,7 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div className="w-full">
+            <div className="">
               <label
                 htmlFor="lastMaintenanceDate"
                 className="block text-sm font-medium text-gray-700"
@@ -778,11 +936,11 @@ export default function AddAutoPage() {
             <div className="mt-1 flex items-center">
               {carte_grise ? (
                 <div className="flex items-center gap-4">
-                  <p>{carte_grise.name}</p>
+                  <p>{carte_grise}</p>
                   <button
                     type="button"
                     onClick={() => {
-                      setValue("carteGrise", undefined);
+                      setValue("carteGrise", "");
                       if (fileInputRef.current) {
                         fileInputRef.current.value = "";
                       }
@@ -808,7 +966,7 @@ export default function AddAutoPage() {
                         ref={fileInputRef}
                         onChange={(e) => {
                           if (e.target.files?.[0]) {
-                            setValue("carteGrise", e.target.files[0]);
+                            setValue("carteGrise", e.target.files[0].name);
                           }
                         }}
                       />
@@ -833,11 +991,11 @@ export default function AddAutoPage() {
             <div className="mt-1 flex items-center">
               {pv_controle_technique ? (
                 <div className="flex items-center gap-4">
-                  <p>{pv_controle_technique.name} </p>
+                  <p>{pv_controle_technique} </p>
                   <button
                     type="button"
                     onClick={() => {
-                      setValue("pvControleTechnique", undefined);
+                      setValue("pvControleTechnique", "");
                       if (fileInputRef.current) {
                         fileInputRef.current.value = "";
                       }
@@ -863,7 +1021,10 @@ export default function AddAutoPage() {
                         ref={fileInputRef}
                         onChange={(e) => {
                           if (e.target.files?.[0]) {
-                            setValue("pvControleTechnique", e.target.files[0]);
+                            setValue(
+                              "pvControleTechnique",
+                              e.target.files[0].name
+                            );
                           }
                         }}
                       />
@@ -898,7 +1059,20 @@ export default function AddAutoPage() {
               onChange={(e) => {
                 if (e.target.files) {
                   const files = Array.from(e.target.files);
-                  setValue("imagesAuto", files);
+                  setValue("imagesAuto", [
+                    ...watch("imagesAuto"),
+                    ...files.map((val) => ({
+                      url: val.name,
+                      id: (allImages?.length + 1).toString(),
+                    })),
+                  ]);
+                  setAllImages([
+                    ...watch("imagesAuto"),
+                    ...files.map((val) => ({
+                      url: val.name,
+                      id: (allImages?.length + 1).toString(),
+                    })),
+                  ]);
                 }
               }}
             />
@@ -912,26 +1086,32 @@ export default function AddAutoPage() {
 
             {/* Aperçu des images sélectionnées */}
             <div className="mt-2 grid grid-cols-3 gap-2">
-              {images_auto.map((file, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Aperçu ${index + 1}`}
-                    className="h-24 w-full object-cover rounded"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newFiles = [...images_auto];
-                      newFiles.splice(index, 1);
-                      setValue("imagesAuto", newFiles);
-                    }}
-                    className="absolute w-[20px] h-[20px] top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+              {allImages &&
+                allImages.map((file, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={"/" + file.url}
+                      alt={`Aperçu ${index + 1}`}
+                      className="h-24 w-full object-cover rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => deleteMyImage(file.id, index)}
+                      className="flex items-center justify-center cursor-pointer absolute w-[20px] h-[20px] top-1 right-1 bg-red-500 text-white rounded-full  opacity-0 group-hover:opacity-100"
+                    >
+                      {deleteStateImage ? "..." : "X"}
+                    </button>
+
+                    <a
+                      title="Download"
+                      href={"/" + file.url}
+                      download
+                      className="flex items-center justify-center cursor-pointer absolute w-[20px] h-[20px] top-1 left-1 bg-gray-700 text-white rounded-full  opacity-0 group-hover:opacity-100"
+                    >
+                      <span className="icon-[fa6-solid--download] text-white text-xl"></span>
+                    </a>
+                  </div>
+                ))}
             </div>
             {errors.imagesAuto && (
               <p className="mt-1 text-sm text-red-600">
@@ -977,18 +1157,49 @@ export default function AddAutoPage() {
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSubmit(onSubmit)}
             >
-              {isSubmitting ? "Enregistrement en cours..." : "Ajouter"}
+              {isSubmitting ? "Mis à jour en cours..." : "Mettre à jour"}
             </button>
           </div>
         </form>
         <div>
+          {
+            <AlertDialog open={openDialogAuto}>
+              <AlertDialogTrigger
+                onClick={() => setOpenDialogAuto(true)}
+                className="w-full flex mt-2 justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-[#333333] bg-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Supprimer
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Es-tu absolument sur de vouloir supprimer
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Cette action ne peut être annulée. Elle supprimera
+                    définitivement votre compte et vos données de nos serveurs.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setOpenDialogAuto(false)}>
+                    Annuler
+                  </AlertDialogCancel>
+                  <AlertDialogAction onClick={deleteAuto} disabled={deleteData}>
+                    {deleteData ? "Suppression en cours..." : "Supprimer"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          }
+        </div>
+        <div>
           <button
             type="button"
             disabled={isSubmitting}
-            className="mt-2 w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-red-400 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
-            onClick={() => router.push("/cars")}
+            className="mt-5  flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-red-400 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
+            onClick={() => router.back()}
           >
-            Retour à l'accueil
+            Retour
           </button>
         </div>
       </motion.div>

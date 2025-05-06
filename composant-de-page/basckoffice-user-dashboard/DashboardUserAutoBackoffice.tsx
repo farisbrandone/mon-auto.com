@@ -3,7 +3,7 @@
 import HeaderCars from "@/components/HeaderCars";
 import React, { useEffect, useState } from "react";
 
-import { getDataAsync, getUserDataAsync } from "@/app/actions/actions";
+import { getUserDataAsync } from "@/app/actions/actions";
 import { DashboardTable } from "../dashboard-backoffice/DashboardTable";
 import { ColumnUserHeader } from "./ColumnUserHeader";
 

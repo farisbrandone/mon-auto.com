@@ -41,7 +41,7 @@ export const CountrySelect = ({
           error ? "border-red-500" : "border-gray-300"
         }`}
       >
-        <option value="">Select a country</option>
+        <option value="">Choisir un pays</option>
         {countries.map((country) => (
           <option key={country} value={country}>
             {country}

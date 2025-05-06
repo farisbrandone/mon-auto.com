@@ -3,28 +3,49 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   RegisterFormData,
   RegisterSchema,
+  RegisterUpdateFormData,
+  RegisterUpdateSchema,
   typeDoc,
   UserType,
 } from "@/lib/validations/seller";
-import { registerUser } from "@/app/actions/auth";
+import { registerUser, updateUser } from "@/app/actions/auth";
 import { Logo, Logo2 } from "@/components/MyLogo";
 import { CountrySelect } from "@/components/CountrySelect";
 import { PhoneInput } from "@/components/PhoneInput";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-import Link from "next/link";
+import "react-datepicker/dist/react-datepicker.css";
+import {
+  deleteSellerUser,
+  getSingleUserDataAsync,
+} from "@/app/actions/actions";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-export default function SellerSigup() {
+export default function BackofficeDetailUser() {
+  const { slug } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string>("");
   const [errorSend, setErrorSend] = useState("");
   const [successSend, setSuccessSend] = useState(false);
-  const [transitionForAdd, setTransitionForAdd] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openDialogUser, setOpenDialogUser] = useState(false);
+  const [deleteData, setDeleteData] = useState(false);
   const router = useRouter();
   const {
     register,
@@ -33,8 +54,8 @@ export default function SellerSigup() {
     watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(RegisterSchema),
+  } = useForm<RegisterUpdateFormData>({
+    resolver: zodResolver(RegisterUpdateSchema),
     defaultValues: {
       activeState: false,
     },
@@ -43,12 +64,12 @@ export default function SellerSigup() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setValue("identificationDocumentFile", file);
+      setValue("identificationDocumentFile", file.name);
       setFileName(file.name);
     }
   };
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (data: RegisterUpdateFormData) => {
     const result = RegisterSchema.safeParse(data);
 
     if (!result.success) {
@@ -57,7 +78,15 @@ export default function SellerSigup() {
     }
 
     const formData = new FormData();
+
+    if (!localStorage.getItem("mon-auto-token")) {
+      router.push("/seller-signup");
+    }
+    const token = localStorage.getItem("mon-auto-token") as string;
+    console.log(token);
+
     console.log(data.phone);
+    formData.set("usetToken", token);
     formData.set("nom", data.nom);
     formData.set("prenom", data.prenom);
     formData.set("email", data.email);
@@ -74,10 +103,10 @@ export default function SellerSigup() {
       `(${data.phoneWhatsapp.countryCode})${data.phoneWhatsapp.number}`
     );
     formData.set("activeState", `${data.activeState}`);
-    formData.set("password", data.password);
+
     formData.set("ville", data.ville ? data.ville : "");
     formData.set("country", data.country);
-    formData.set("confirmPassword", data.confirmPassword);
+
     formData.set(
       "typeSellerIdentificationDoc",
       data.typeSellerIdentificationDoc
@@ -86,14 +115,15 @@ export default function SellerSigup() {
     try {
       // Envoyer le token au serveur pour vérification
 
-      const value = await registerUser(formData);
+      const value = await updateUser(formData, slug as string);
       console.log(value);
       if (value) {
         if (value?.success) {
           setSuccessSend(true);
-          reset();
-          //router.push("/seller-login");
+          toast.success("mis à jour de l'utilisateur réussi");
+          router.back();
         } else {
+          toast.error("Une erreur est survenue pendant la mis à jour");
           if (value.errors) {
             setErrorSend("Une erreur est survenue,réessayez svp");
           }
@@ -102,30 +132,87 @@ export default function SellerSigup() {
       //reset();
       // Redirection ou message de succès
     } catch (error) {
+      toast.error("Une erreur est survenue pendant la mis à jour");
       console.error("Erreur lors de l'inscription:", error);
     }
   };
 
-  if (successSend) {
-    return (
-      <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className=" mx-auto sm:w-[400px] min-h-[200px] p-4 loginShaddow"
-        >
-          <h1 className="text-2xl font-bold mb-4 text-green-600">
-            Inscription réussie !
-          </h1>
-          <p>
-            Un email de vérification vous a été envoyé, vérifier si possible
-            dans les spams
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
+  const deleteUser = async () => {
+    const token = JSON.parse(localStorage.getItem("mon-auto-token") as string);
+    try {
+      setDeleteData(true);
+
+      const result = await deleteSellerUser(slug as string, token);
+      if (result.token) {
+        const val = JSON.stringify(result.token);
+        localStorage.setItem("mon-auto-token", val);
+      }
+      toast.success("L'utilisateur a été supprimer avec success");
+      setDeleteData(false);
+      setOpenDialogUser(false);
+      router.back();
+    } catch (error) {
+      setDeleteData(false);
+      toast.error("Une erreur est survenue pendant la suppression");
+      setOpenDialogUser(false);
+    }
+  };
+
+  useEffect(() => {
+    const getUserById = async () => {
+      setLoading(true);
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
+      );
+      const response = await getSingleUserDataAsync(slug as string, token);
+      const newUsers = response.data;
+      console.log({ newUsers });
+      setValue("adresse", newUsers.adresse);
+
+      setValue("country", newUsers.country);
+      setValue("description", newUsers.description);
+      setValue("email", newUsers.email);
+      setValue(
+        "identificationDocumentFile",
+        newUsers.identificationDocumentFile
+      );
+      setFileName(newUsers.identificationDocumentFile);
+      setValue("nom", newUsers.nom);
+      setValue("phone", {
+        number: newUsers.telephone.split(")")[1],
+        countryCode: newUsers.telephone.split(")")[0].replaceAll("(", ""),
+      });
+      setValue("phoneWhatsapp", {
+        number: newUsers.telephoneWhatsapp.split(")")[1],
+        countryCode: newUsers.telephoneWhatsapp
+          .split(")")[0]
+          .replaceAll("(", ""),
+      });
+      setValue(
+        "phoneWhatsapp.countryCode",
+        newUsers.telephoneWhatsapp.split(")")[0].replaceAll("(", "")
+      );
+      setValue("phone.number", newUsers.telephone.split(")")[1]);
+      setValue(
+        "phoneWhatsapp.number",
+        newUsers.telephoneWhatsapp.split(")")[0].replaceAll("(", "")
+      );
+      setValue(
+        "phone.countryCode",
+        newUsers.telephone.split(")")[0].replaceAll("(", "")
+      );
+      setValue("prenom", newUsers.prenom);
+      //setValue("roleSeller", newUsers.roleSeller);
+      setValue("typeSeller", newUsers.typeSeller);
+      setValue(
+        "typeSellerIdentificationDoc",
+        newUsers.typeSellerIdentificationDoc
+      );
+      setValue("ville", newUsers.ville);
+    };
+
+    getUserById();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 pt-12 px-4 sm:px-6 lg:px-8">
@@ -140,7 +227,7 @@ export default function SellerSigup() {
         <div className=" flex items-center sm:flex-col sm:gap-3 mb-5">
           <Logo2 />
           <div className="flex items-center justify-center text-2xl font-bold text-center flex-1 ">
-            Inscription
+            Mise à jour
           </div>
         </div>
 
@@ -206,47 +293,7 @@ export default function SellerSigup() {
             )}
           </div>
           {/* Mot de passe */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Mot de passe *
-              </label>
-              <input
-                id="password"
-                type="password"
-                {...register("password")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
 
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirmer le mot de passe *
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                {...register("confirmPassword")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-          </div>
           {/* Fichier Passeport */}
           <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
             <div>
@@ -381,48 +428,7 @@ export default function SellerSigup() {
               </p>
             )}
           </div>
-          {/* Téléphone et telephoneWhatsapp */}
-          {/*  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="telephone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Téléphone *
-              </label>
-              <input
-                id="telephone"
-                {...register("telephone")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="+33 6 12 34 56 78"
-              />
-              {errors.telephone && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.telephone.message}
-                </p>
-              )}
-            </div>
 
-            <div>
-              <label
-                htmlFor="telephoneWhatsapp"
-                className="block text-sm font-medium text-gray-700"
-              >
-                telephoneWhatsapp
-              </label>
-              <input
-                id="telephoneWhatsapp"
-                {...register("telephoneWhatsapp")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="+33 6 12 34 56 78"
-              />
-              {errors.telephoneWhatsapp && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.telephoneWhatsapp.message}
-                </p>
-              )}
-            </div>
-          </div> */}
           <div>
             <label
               htmlFor="Ville"
@@ -451,14 +457,14 @@ export default function SellerSigup() {
 
             <PhoneInput
               name="phone"
-              label="Phone Number"
+              label="Telephone"
               error={errors.phone?.message}
               register={register}
             />
           </div>
           <PhoneInput
             name="phoneWhatsapp"
-            label="Phone number Whatsapp"
+            label="Telephone Whatsapp"
             error={errors.phoneWhatsapp?.message}
             register={register}
           />
@@ -468,26 +474,50 @@ export default function SellerSigup() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex justify-center text-[16px] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full flex justify-center text-[16px] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 cursor-pointer "
             >
-              {isSubmitting ? "Inscription en cours..." : "S'inscrire"}
+              {isSubmitting ? "Mis à jour en cours..." : "Mettre à jour"}
             </button>
           </div>
+          {
+            <AlertDialog open={openDialogUser}>
+              <AlertDialogTrigger
+                onClick={() => setOpenDialogUser(true)}
+                className="w-full flex justify-center text-[16px] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 disabled:opacity-50 cursor-pointer"
+              >
+                Supprimer
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Es-tu absolument sur de vouloir supprimer
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Cette action ne peut être annulée. Elle supprimera
+                    définitivement votre compte et vos données de nos serveurs.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setOpenDialogUser(false)}>
+                    Annuler
+                  </AlertDialogCancel>
+                  <AlertDialogAction onClick={deleteUser} disabled={deleteData}>
+                    {deleteData ? "Suppression en cours..." : "Supprimer"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          }
+
           <div>
             <button
               type="button"
-              onClick={() => router.push("/")}
-              className="w-full flex justify-center text-[16px] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-400 hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400 disabled:opacity-50"
+              onClick={() => router.back()}
+              className="w-[150px] cursor-pointer flex justify-center text-[16px] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-400 hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400 disabled:opacity-50"
             >
-              Retour accueil
+              Retour
             </button>
           </div>
-          <div className="flex gap-1 w-full justify-center">
-            <p>Déja inscrit</p>
-            <Link href="/seller-login" className="underline text-red-400 ">
-              Connecte-toi ici
-            </Link>
-          </div>{" "}
         </form>
       </motion.div>
       {/* </div> */}

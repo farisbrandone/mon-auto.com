@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import MyLogo, { Logo } from "@/components/MyLogo";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { motion } from "framer-motion";
 import { LoginFormData, LoginSchema } from "@/lib/validations/seller";
 import { signIn } from "@/app/actions/auth";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 // You'll need to implement this
 
 const SellerLogin = () => {
@@ -27,6 +28,9 @@ const SellerLogin = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(LoginSchema),
   });
+
+  const [transitionForAdd, setTransitionForAdd] = useState(false);
+
   const router = useRouter();
   const onSubmit = async (data: LoginFormData) => {
     console.log("popo");
@@ -42,6 +46,7 @@ const SellerLogin = () => {
       }
 
       reset();
+      setTransitionForAdd(true);
       router.push("/add-auto");
     } catch (error) {
       setError("root", {
@@ -50,6 +55,26 @@ const SellerLogin = () => {
       });
     }
   };
+
+  if (transitionForAdd) {
+    return (
+      <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className=" mx-auto sm:w-[400px] min-h-[200px] p-4 loginShaddow"
+        >
+          <h1 className="text-2xl font-bold mb-4 text-green-600">
+            Connexion réussie !
+          </h1>
+          <p>
+            Patientez svp, vous etes redirigez vers la page d'ajout d'auto...
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className=" bg-white flex sm:grid sm:grid-cols-2 justify-center gap-1 w-screen h-screen text-[#636364] p-2 text-[16px] ">
@@ -132,7 +157,7 @@ const SellerLogin = () => {
           >
             {isSubmitting ? "Se connecter..." : "Se connecter"}
           </button>
-          <div className="flex items-center gap-1 mt-1">
+          <div className="flex items-center gap-1 mt-1 text-[14px] sm:text-[16px] ">
             <p>Vous n'avez pas de compte ? </p>
             <Link
               href="/seller-signup"
@@ -143,11 +168,18 @@ const SellerLogin = () => {
           </div>
         </div>
       </form>
-      <img
+
+      <ImageWithSkeleton
+        src="/auth-image.jpg"
+        alt=""
+        className=" w-full h-full hidden sm:flex"
+      />
+
+      {/*   <img
         src="/auth-image.jpg"
         alt=""
         className=" w-full h-full hidden sm:flex object-cover"
-      />
+      /> */}
     </div>
   );
 };

@@ -67,33 +67,11 @@ export async function registerUser(formData: FormData) {
     roleSeller: ["USER", formData.get("typeSeller")],
     dateOfCreated: new Date().toISOString(),
     dateOfModified: new Date().toISOString(),
-    //confirmPassword: formData.get("confirmPassword"),
   };
 
-  // Valider les données
   console.log(rawData);
 
   try {
-    // Upload du fichier PDF
-    /* const passportBlob = await put(
-      `passports/${Date.now()}-${result.data.passportFile.name}`,
-      result.data.passportFile,
-      { access: 'public' }
-    ); */
-
-    // Hacher le mot de passe (si vous en avez un)
-    // const hashedPassword = await hash(password, 12);
-
-    // Enregistrer dans la base de données
-    /*
-    await db.user.create({
-      data: {
-        ...result.data,
-        passportUrl: passportBlob.url,
-        // password: hashedPassword,
-      },
-    });
-    */
     const response2 = await axios.post(
       "http://localhost:8090/signup",
       {
@@ -107,18 +85,7 @@ export async function registerUser(formData: FormData) {
       }
     );
 
-    /*   const response = await fetch("http://localhost:8090/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...rawData,
-        identificationDocumentFile: rawData.identificationDocumentFile.name,
-      }),
-    }); */
-
-    if (response2.status === 201) {
+    if (response2.status === 200) {
       return { success: true, data: response2.data, errors: null };
     }
     //
@@ -129,6 +96,111 @@ export async function registerUser(formData: FormData) {
       errors: "Une erreur est survenue lors de l'inscription",
       data: null,
     };
+  }
+}
+
+export async function updateUser(formData: FormData, id: string) {
+  // Convertir FormData en objet
+
+  const token = JSON.parse(formData.get("userToken") as string);
+  const rawData = {
+    nom: formData.get("nom"),
+    prenom: formData.get("prenom"),
+    email: formData.get("email"),
+    identificationDocumentFile: formData.get("identificationDocumentFile"),
+    description: formData.get("description"),
+    typeSeller: formData.get("typeSeller"),
+    adresse: formData.get("adresse"),
+    telephone: formData.get("telephone"),
+    telephoneWhatsapp: formData.get("telephoneWhatsapp"),
+    activeState: formData.get("activeState") === "true" ? true : false,
+    typeSellerIdentificationDoc: formData.get("typeSellerIdentificationDoc"),
+    country: formData.get("country"),
+    ville: formData.get("ville"),
+    dateOfModified: new Date().toISOString(),
+  };
+
+  console.log(rawData);
+
+  try {
+    const response2 = await axios.put(
+      `http://localhost:8090/updateUser/${id}`,
+      {
+        ...rawData,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token["access-token"]}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response2.status === 201) {
+      return { success: true, data: response2.data, errors: null };
+    }
+    //
+  } catch (error) {
+    let myError = "";
+    console.error("Erreur lors de l'inscription:", error);
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          // Handle unauthorized (e.g., refresh token or redirect to login)
+          try {
+            const response = await axios.get(
+              `http://localhost:8090/refreshToken`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token["refresh-token"]}`,
+                },
+              }
+            );
+
+            const response2 = await axios.put(
+              `http://localhost:8090/updateUser/${id}`,
+              rawData,
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response2.status === 200) {
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+            // redirect("/seller-login");
+          }
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error("No response received:", error.request);
+        myError = error.message;
+      } else {
+        // Something happened in setting up the request
+        console.error("Request setup error:", error.message);
+        myError = error.message;
+      }
+    } else {
+      // Non-Axios error (e.g., in your code)
+      console.error("Unexpected error:", error);
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
   }
 }
 

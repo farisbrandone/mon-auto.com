@@ -56,4 +56,20 @@ export const ColumnHeader: ColumnDef<userSchema>[] = [
       );
     },
   },
+
+  {
+    id: "actions",
+    header: () => <div className="text-left">Détail</div>,
+    cell: ({ row }) => {
+      console.log({ id: row.original.id });
+      return (
+        <div>
+          <Link href={`/backoffice-detail-user/${row.original.id}`}>
+            {" "}
+            Détails utilisateur{" "}
+          </Link>
+        </div>
+      );
+    },
+  },
 ];

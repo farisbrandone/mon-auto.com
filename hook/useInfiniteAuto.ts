@@ -26,6 +26,7 @@ export const useInfiniteAutos = () => {
     } finally {
       setLoading(false);
     }
+    console.log({ hasMore });
   }, [page, loading, hasMore]);
 
   useEffect(() => {

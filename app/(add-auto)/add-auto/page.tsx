@@ -1,11 +1,12 @@
 import AddAutoPage from "@/composant-de-page/AddAutoPage";
+import ParentAddAuto from "@/composant-de-page/ParentAddAuto";
 import React from "react";
 
 function page() {
   return (
-    <div>
+    <ParentAddAuto>
       <AddAutoPage />
-    </div>
+    </ParentAddAuto>
   );
 }
 

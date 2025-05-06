@@ -29,7 +29,6 @@ import React, {
   useState,
 } from "react";
 
-import { MySkeleton } from "@/components/MySkeleton";
 import { formatDate, formatMoney } from "@/lib/utils";
 
 import { useInfiniteAutos } from "@/hook/useInfiniteAuto";
@@ -560,24 +559,26 @@ function CarsPage() {
                     <p className="text-end w-full"> {val.villeDuBien} </p>
                   </div>
                 </div>
-                <Link
-                  href={`/detail-car/${val.id}`}
-                  className=" text-center p-1 text-[18px] w-full bg-[#191919] text-white rounded-[4px] border-none border-[#33333383]  cursor-pointer hover:bg-[#cacaca] hover:text-[#191919] mx-1 transition-colors duration-500 "
-                >
-                  Voir les détails
-                </Link>
-                <div className="flex items-center w-full justify-between mt-2 text-[18px] font-[400] px-2">
-                  <div className="flex items-center">
-                    <Localisation color="#d14141" />
-                    <p className="ml-1 hover:text-red-600  cursor-pointer ">
-                      MonAuto.com
-                    </p>{" "}
-                  </div>
-                  <div className="flex items-center">
-                    <Telephone color="#d14141" />
-                    <p className="ml-1  hover:text-red-600 cursor-pointer">
-                      Tel: 655968956
-                    </p>
+                <div className="flex flex-col flex-1 w-full gap-1 justify-end ">
+                  <Link
+                    href={`/detail-car/${val.id}`}
+                    className=" text-center p-1 text-[18px] w-full bg-[#191919] text-white rounded-[4px] border-none border-[#33333383]  cursor-pointer hover:bg-[#cacaca] hover:text-[#191919] mx-1 transition-colors duration-500 "
+                  >
+                    Voir les détails
+                  </Link>
+                  <div className="flex items-center w-full justify-between mt-2 text-[18px] font-[400] px-2">
+                    <div className="flex items-center">
+                      <Localisation color="#d14141" />
+                      <p className="ml-1 hover:text-red-600  cursor-pointer ">
+                        MonAuto.com
+                      </p>{" "}
+                    </div>
+                    <div className="flex items-center">
+                      <Telephone color="#d14141" />
+                      <p className="ml-1  hover:text-red-600 cursor-pointer">
+                        Tel: 655968956
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -585,11 +586,6 @@ function CarsPage() {
           })}
         {(loading || lolo) && (
           <>
-            {/*   <MySkeleton />
-            <MySkeleton />
-
-            <MySkeleton />
-            <MySkeleton /> */}
             <div className="flex justify-center py-8 col-span-2 items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-t-4 border-[#333333]"></div>
             </div>

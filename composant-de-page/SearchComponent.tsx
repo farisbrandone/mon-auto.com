@@ -114,13 +114,14 @@ function SearchComponent() {
   // Initialize criteria from URL query parameters
   useEffect(() => {
     setLolo(false);
+    console.log("zouzou");
     updateSearchParams();
   }, []);
 
   const updateSearchParams = useCallback(
     async (reset = false) => {
       const newCriteria = handleSubmit2();
-      console.log(newCriteria);
+      console.log(loading, !reset, !hasMore);
       if (loading || (!reset && !hasMore)) return;
       setLoading(true);
 
@@ -128,7 +129,7 @@ function SearchComponent() {
         const currentPage = reset ? 0 : page;
 
         const params = new URLSearchParams();
-        console.log({ newCriteria });
+
         if (newCriteria.marques) params.set("marques", newCriteria.marques);
         if (newCriteria.typesCarrosserie)
           params.set("typesCarrosserie", newCriteria.typesCarrosserie);
@@ -192,7 +193,7 @@ function SearchComponent() {
 
   const updateSearchParamsForSeach = async (newCriteria: SearchCriteria) => {
     const params = new URLSearchParams();
-    console.log({ newCriteria });
+
     if (newCriteria.marques) params.set("marques", newCriteria.marques);
     if (newCriteria.typesCarrosserie)
       params.set("typesCarrosserie", newCriteria.typesCarrosserie);
@@ -226,8 +227,8 @@ function SearchComponent() {
       params.set("villeDuBien", newCriteria.villeDuBien);
     // Add other parameters as needed
 
-    router.push(
-      `http://localhost:3000/search?${params.toString()}&page=${page}&size=10`
+    window.location.replace(
+      `http://localhost:3000/search?${params.toString()}`
     );
   };
 
@@ -366,8 +367,6 @@ function SearchComponent() {
       queryState.selectedColor =
         params.selectedColor; /* ?.label + "-" + selectedColor?.value; */
     }
-
-    console.log(queryState);
 
     return queryState;
   };
@@ -657,15 +656,18 @@ function SearchComponent() {
         </form>
       </div>
       {(initialLoad && loading) || lolo ? (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        </div>
+        <>
+          <div className="flex justify-center py-8 col-span-2 items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-t-4 border-[#333333]"></div>
+          </div>
+        </>
       ) : (
         <div className="flex flex-col sm:grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-4 mb-3.5 p-2">
           {autos &&
             autos?.map((val, index) => {
               return (
                 <div
+                  key={index}
                   ref={index === autos.length - 1 ? lastCarElementRef : null}
                   className="flex flex-col items-center max-w-xl mx-auto  border-[1px] border-[#00000021] border-solid cardDetailShadow rounded-lg "
                 >
@@ -726,24 +728,27 @@ function SearchComponent() {
                       <p className="text-end w-full"> {val.villeDuBien} </p>
                     </div>
                   </div>
-                  <Link
-                    href={`/detail-car/${val.id}`}
-                    className=" text-center text-[18px] w-full bg-[#1eb0fc] text-white rounded-[1px] border-[2px] border-solid border-[#33333383]  cursor-pointer hover:bg-white hover:text-[#1eb0fc] mx-1 transition-colors "
-                  >
-                    Voir les détails
-                  </Link>
-                  <div className="flex items-center w-full justify-between mt-2 text-[18px] font-[400] px-2">
-                    <div className="flex items-center">
-                      <Localisation color="#1eb0fc" />
-                      <p className="ml-1 hover:text-[#1eb0fc] cursor-pointer ">
-                        MonAuto.com
-                      </p>{" "}
-                    </div>
-                    <div className="flex items-center">
-                      <Telephone color="#1eb0fc" />
-                      <p className="ml-1  hover:text-[#1eb0fc] cursor-pointer">
-                        Tel: 655968956
-                      </p>
+
+                  <div className="flex flex-col flex-1 w-full gap-1 justify-end ">
+                    <Link
+                      href={`/detail-car/${val.id}`}
+                      className=" text-center p-1 text-[18px] w-full bg-[#191919] text-white rounded-[4px] border-none border-[#33333383]  cursor-pointer hover:bg-[#cacaca] hover:text-[#191919] mx-1 transition-colors duration-500 "
+                    >
+                      Voir les détails
+                    </Link>
+                    <div className="flex items-center w-full justify-between mt-2 text-[18px] font-[400] px-2">
+                      <div className="flex items-center">
+                        <Localisation color="#d14141" />
+                        <p className="ml-1 hover:text-red-600  cursor-pointer ">
+                          MonAuto.com
+                        </p>{" "}
+                      </div>
+                      <div className="flex items-center">
+                        <Telephone color="#d14141" />
+                        <p className="ml-1  hover:text-red-600 cursor-pointer">
+                          Tel: 655968956
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

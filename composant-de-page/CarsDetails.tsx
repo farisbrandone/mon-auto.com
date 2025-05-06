@@ -12,6 +12,7 @@ import {
   tab,
 } from "@/components/ImageCarousel";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import SkeletonTrue from "@/components/SkeletonTrue";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import clsx from "clsx";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -109,7 +110,8 @@ function CarsDetails() {
             </div>
           </div> */}
           <div className="mt-2">
-            <Skeleton className="h-[450px] w-full " />
+            <SkeletonTrue className="h-[450px] w-full " />
+            {/*  <Skeleton className="h-[450px] w-full " /> */}
           </div>
 
           <div className="w-full mt-4 border-[1px] border-solid border-[#33333359] shadow-2xl rounded-md max-w-7xl mx-auto ">

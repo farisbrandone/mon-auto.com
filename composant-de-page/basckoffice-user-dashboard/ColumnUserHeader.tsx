@@ -97,7 +97,7 @@ export const ColumnUserHeader: ColumnDef<autoState>[] = [
     seller: { href: 'http://localhost:8090/autos/1/seller' }
           
           */}
-          <Link href={`/backoffice-user-dashboard/${row.original.id}`}>
+          <Link href={`/backoffice-detail-auto/${row.original.id}`}>
             {" "}
             Voir les détails{" "}
           </Link>

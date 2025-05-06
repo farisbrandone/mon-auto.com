@@ -86,12 +86,12 @@ function SelectCity({
             ...provided,
             padding: "8px 12px",
             backgroundColor: state.isFocused ? "#f0f0f0" : "white",
-            fontSize: "14px",
+            fontSize: "16px",
           }),
           control: (provided) => ({
             ...provided,
             minHeight: "30px",
-            fontSize: "14px",
+            fontSize: "16px",
           }),
         }}
       />

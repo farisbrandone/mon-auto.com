@@ -1,6 +1,11 @@
 // app/actions.ts
 "use server";
 
+import {
+  RegisterFormData,
+  SellerFormData,
+  SellerUpdateFormData,
+} from "@/lib/validations/seller";
 import axios from "axios";
 import { redirect } from "next/navigation";
 
@@ -39,7 +44,7 @@ export async function registerSeller(formData: FormData) {
     tailleDuMoteur: formData.get("tailleDuMoteur"),
     model: formData.get("model"),
     nbreDePlace: formData.get("nbreDePlace"),
-    nbreDePort: formData.get("nbreDePorte"),
+    nbreDePorte: formData.get("nbreDePorte"),
     villeDuBien: formData.get("villeDuBien"),
     couleurInt: formData.get("couleurInt"),
     couleurExt: formData.get("couleurExt"),
@@ -176,6 +181,177 @@ export async function registerSeller(formData: FormData) {
     return { success: false, data: null, error: myError };
   }
 }
+export interface imageType {
+  url: string;
+  id: String;
+}
+
+export const updateSellerAuto = async (formData: FormData, id: string) => {
+  let carte_grise = formData.get("carteGrise");
+  let pv_controle_technique = formData.get("pvControleTechnique");
+  const size = formData.get("size_image");
+  console.log(size);
+  const images_auto: imageType[] = [];
+  if (size && Number(size) !== 0) {
+    for (let i = 0; i < Number(size); i++) {
+      const value = formData.get("imagesAuto" + i);
+      images_auto.push(JSON.parse(value as string) as imageType);
+    }
+  }
+
+  if (!carte_grise) {
+    carte_grise = null;
+  }
+
+  if (!pv_controle_technique) {
+    pv_controle_technique = null;
+  }
+
+  const refreshToken = formData.get("mon-refresh-token");
+
+  const dd = formData.get("typeCarburant");
+  const typcarb =
+    dd === "Essence"
+      ? "ESSENCE"
+      : dd === "Diesel"
+      ? "DIESEL"
+      : dd === "Hybride"
+      ? "HYBRIDE"
+      : dd === "Electrique"
+      ? "ELECTRIQUE"
+      : "GPL";
+
+  const toto = formData.get("typeTransmission");
+  const trans =
+    toto === "Manuelle"
+      ? "TRANSMISSION_MANUELLE"
+      : toto === "Automatique"
+      ? "TRANSMISSION_AUTOMATIQUE"
+      : "TRANSMISSION_SEMI_AUTOMATIQUE";
+
+  // Convertir FormData en objet
+  const rawData = {
+    id: Number(id),
+    marques: formData.get("marques"),
+    conso100kmAutoRoute: formData.get("conso100kmAutoRoute"),
+    conso100kmVille: formData.get("conso100kmVille"),
+    tailleDuMoteur: formData.get("tailleDuMoteur"),
+    model: formData.get("model"),
+    nbreDePlace: formData.get("nbreDePlace"),
+    nbreDePorte: formData.get("nbreDePorte"),
+    villeDuBien: formData.get("villeDuBien"),
+    couleurInt: formData.get("couleurInt"),
+    couleurExt: formData.get("couleurExt"),
+    typesCarrosserie: formData.get("typesCarrosserie"),
+    typeCarburant: typcarb,
+    typeTransmission: formData.get("typeTransmission"),
+    typeDeTrainConducteur: formData.get("typeDeTrainConducteur"),
+    typeMoteur: formData.get("typeMoteur"),
+    kilometrage: formData.get("kilometrage"),
+    kilometrageUnit: formData.get("kilometrageUnit"),
+    prix: formData.get("prix"),
+    devise: formData.get("devise"),
+    immatriculation: formData.get("immatriculation"),
+    acceptsTerms: formData.get("acceptsTerms") === "on",
+    carteGriseUrl: carte_grise,
+    pvControleTechniqueUrl: pv_controle_technique,
+    imagesAuto: images_auto,
+    userToken: formData.get("mon-auto-token"),
+    statusOfAuto: formData.get("statusOfAuto"),
+    anneeDeFabrication: new Date(
+      formData.get("anneeDeFabrication") as string
+    ).toISOString(),
+    lastMaintenanceDate: formData.get("lastMaintenanceDate")
+      ? new Date(formData.get("lastMaintenanceDate") as string).toISOString()
+      : "",
+    dateOfModified: new Date().toISOString(),
+    dateOfCreated: new Date(formData.get("dateOfCreated") as string),
+  };
+
+  console.log(rawData);
+
+  try {
+    const response = await axios.put(
+      `http://localhost:8090/updateAuto`,
+      rawData,
+      {
+        headers: {
+          Authorization: `Bearer ${formData.get("mon-auto-token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return { success: true, data: response.data, error: null, token: null };
+    } else {
+      throw new Error("problème de connexion");
+    }
+  } catch (error) {
+    let myError = "";
+    console.error("Erreur lors de l'inscription:", error);
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          // Handle unauthorized (e.g., refresh token or redirect to login)
+          try {
+            const response = await axios.get(
+              `http://localhost:8090/refreshToken`,
+              {
+                headers: {
+                  Authorization: `Bearer ${refreshToken}`,
+                },
+              }
+            );
+
+            rawData.userToken = response.data["access-token"];
+
+            const response2 = await axios.put(
+              `http://localhost:8090/updateAuto`,
+              rawData,
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response2.status === 200) {
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+            // redirect("/seller-login");
+          }
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error("No response received:", error.request);
+        myError = error.message;
+      } else {
+        // Something happened in setting up the request
+        console.error("Request setup error:", error.message);
+        myError = error.message;
+      }
+    } else {
+      // Non-Axios error (e.g., in your code)
+      console.error("Unexpected error:", error);
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
+  }
+};
 
 export async function getsearchAutoData(url: string): Promise<any> {
   try {
@@ -434,6 +610,370 @@ export const getAutoDataAsync = async (page: number) => {
     }
   } catch (error) {
     console.error("Erreur lors de l'inscription:", error);
+    throw error;
+  }
+};
+
+export const getSingleAutoDataAsync = async (autoId: string) => {
+  try {
+    const response = await axios.get(`http://localhost:8090/autos/${autoId}`);
+
+    const data = response.data;
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        data: data as any,
+        error: null,
+      };
+    } else {
+      throw new Error("problème de connexion");
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'inscription:", error);
+    throw error;
+  }
+};
+
+export const getImageAuto = async (autoId: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8090/autos/${autoId}/imagesAuto`
+    );
+
+    const data = response.data._embedded.imageAutos.map((val: any) => {
+      const myId = val._links.self.href as string;
+      const dodo = myId.charAt(myId.length - 1);
+
+      return { id: dodo, url: val.url };
+    });
+
+    console.log(data);
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        data: data as any,
+        error: null,
+      };
+    } else {
+      throw new Error("problème de connexion");
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'inscription:", error);
+    throw error;
+  }
+};
+
+/* 
+"http://localhost:8090/autos/2/imagesAuto"
+*/
+
+export const deleteSellerUser = async (id: string, token: any) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:8090/deleteUser/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token["access-token"]}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      error: null,
+      token: null,
+    };
+  } catch (error) {
+    let myError = "";
+    console.error("Erreur lors de l'inscription:", error);
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          try {
+            const response = await axios.get(
+              `http://localhost:8090/refreshToken`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token["refresh-token"]}`,
+                },
+              }
+            );
+            const response2 = await axios.delete(
+              `http://localhost:8090/deleteUser/${id}`,
+
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (response2.status === 200) {
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+          }
+        }
+      } else if (error.request) {
+        myError = error.message;
+      } else {
+        myError = error.message;
+      }
+    } else {
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
+  }
+};
+
+export const deleteImage = async (id: string, token: any) => {
+  console.log(token["access-token"]);
+  try {
+    const response = await axios.delete(
+      `http://localhost:8090/deleteImageAuto/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token["access-token"]}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      error: null,
+      token: null,
+    };
+  } catch (error) {
+    let myError = "";
+    console.error("Erreur lors de l'inscription:", error);
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          // Handle unauthorized (e.g., refresh token or redirect to login)
+          try {
+            const response = await axios.get(
+              `http://localhost:8090/refreshToken`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token["refresh-token"]}`,
+                },
+              }
+            );
+
+            const response2 = await axios.delete(
+              `http://localhost:8090/deleteImagAuto/${id}`,
+
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response2.status === 200) {
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+          }
+        }
+      } else if (error.request) {
+        myError = error.message;
+      } else {
+        myError = error.message;
+      }
+    } else {
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
+  }
+};
+
+export const deleteSellerAuto = async (id: string, token: any) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:8090/deleteAuto/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token["access-token"]}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      error: null,
+      token: null,
+    };
+  } catch (error) {
+    let myError = "";
+    console.error("Erreur lors de l'inscription:", error);
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          try {
+            const response = await axios.get(
+              `http://localhost:8090/refreshToken`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token["refresh-token"]}`,
+                },
+              }
+            );
+            const response2 = await axios.delete(
+              `http://localhost:8090/deleteAuto/${id}`,
+
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (response2.status === 200) {
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+          }
+        }
+      } else if (error.request) {
+        myError = error.message;
+      } else {
+        myError = error.message;
+      }
+    } else {
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
+  }
+};
+
+export const getSingleUserDataAsync = async (autoId: string, token: any) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8090/sellers/${autoId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token["access-token"]}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = response.data;
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        data: data as any,
+        error: null,
+      };
+    } else {
+      throw new Error("problème de connexion");
+    }
+  } catch (error) {
+    let myError = "";
+    console.error("Erreur lors de l'inscription:", error);
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          try {
+            const response = await axios.get(
+              `http://localhost:8090/refreshToken`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token["refresh-token"]}`,
+                },
+              }
+            );
+            const response2 = await axios.delete(
+              `http://localhost:8090/seller/${autoId}`,
+
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (response2.status === 200) {
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+          }
+        }
+      } else if (error.request) {
+        myError = error.message;
+      } else {
+        myError = error.message;
+      }
+    } else {
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
+  }
+};
+
+export const confirmAction = async (token: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8090/confirm?token=${token}`
+    );
+    console.log({ status: response.status, data: response.data });
+    return { status: response.status };
+  } catch (error) {
     throw error;
   }
 };

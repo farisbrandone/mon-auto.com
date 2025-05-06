@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
 //import { Mona_Sans } from "next/font/google";
-import "./globals.css";
-import { Inter, Belleza } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
 
-/* import * as font from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
+/* const monaSans = Mona_Sans({
+  variable: "--font-mona-sans",
+  subsets: ["latin"],
+}); */
 
-const l = font.Belleza;
- */
+export const metadata: Metadata = {
+  title: " Politique de confidentialité MonAuto.com",
+  description:
+    "Le site de référence pour l'achat et la vente de véhicule neuf et d'occasion",
+};
+
+// Configure Inter (Sans-serif)
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -15,18 +21,11 @@ const inter = Inter({
 });
 
 // Configure Playfair Display (Serif - for headings)
-const playfair = Belleza({
-  weight: ["400"],
+const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   display: "swap",
 });
-
-export const metadata: Metadata = {
-  title: "Mon auto.com",
-  description:
-    "Le site de référence pour l'achat et la vente de véhicule neuf et d'occasion",
-};
 
 export default function RootLayout({
   children,
@@ -38,10 +37,7 @@ export default function RootLayout({
       lang="fr"
       className={`${inter.variable} ${playfair.variable} antialiased`}
     >
-      <body /* className={`${monaSans.className} antialiased`} */>
-        <main>{children}</main>
-        <Toaster />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import axios from "axios";
+import ImageWithSkeleton from "./ImageWithSkeleton";
+import SkeletonTrue from "./SkeletonTrue";
 
 export const tab = [
   "/vehicule1.jpg",
@@ -32,16 +34,23 @@ export function ImageCaroussel({
   imagesAuto: string;
 }) {
   const [images, setImages] = React.useState<any[] | null>();
+  const [loading, setLoading] = React.useState(false);
   React.useEffect(() => {
     const getImagesAuto = async () => {
       try {
+        setLoading(true);
         const imagesUrl = await axios.get(imagesAuto);
 
         setImages(imagesUrl.data._embedded.imageAutos);
+        setLoading(false);
       } catch (error) {}
     };
     getImagesAuto();
   }, []);
+
+  if (loading) {
+    return <SkeletonTrue className={className + " h-[300px]"} />;
+  }
 
   return (
     <Carousel className={className}>
@@ -49,10 +58,15 @@ export function ImageCaroussel({
         {images &&
           images.map((value, index) => (
             <CarouselItem key={index}>
-              <img
+              {/*  <img
                 src={"/" + value.url}
                 alt=""
                 className="w-full object-cover rounded-t-lg"
+              /> */}
+              <ImageWithSkeleton
+                src={"/" + value.url}
+                alt=""
+                className=" w-full rounded-t-lg"
               />
             </CarouselItem>
           ))}
