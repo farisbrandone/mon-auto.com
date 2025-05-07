@@ -69,12 +69,13 @@ const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
         <img
           src={src}
           alt={alt}
-          style={{
+          className="w-full h-full object-cover block "
+          /*  style={{
             width: "100%",
             height: "100%",
             objectFit: "cover",
             display: "block",
-          }}
+          }} */
         />
       )}
 

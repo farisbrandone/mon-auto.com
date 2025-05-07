@@ -1,10 +1,9 @@
 import * as React from "react";
 import { COULEURS2, searchValue } from "@/lib/constants/carProperties";
-import { useState } from "react";
 
 import AsyncSelect from "react-select/async";
 import { FixedSizeList as List } from "react-window";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { UseFormSetValue } from "react-hook-form";
 import { searchSchema } from "@/lib/validations/seller";
 import { z } from "zod";
 
@@ -70,7 +69,7 @@ function VehicleColorPicker({
   };
 
   // Custom menu list for virtualization (improves performance)
-  const MenuList: React.FC<MenuListProps> = ({ children, ...props }) => {
+  const MenuList: React.FC<MenuListProps> = ({ children }) => {
     const height = 35;
     const totalHeight = React.Children.count(children) * height;
 

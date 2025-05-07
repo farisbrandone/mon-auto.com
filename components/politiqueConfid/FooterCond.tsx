@@ -30,7 +30,7 @@ const FooterCond: FC = () => {
             href="/terms"
             className="text-gray-50 hover:text-gray-100  hover:underline"
           >
-            Conditions d'utilisation
+            Conditions d&apos;utilisation
           </Link>
           <Link
             href="/contact"

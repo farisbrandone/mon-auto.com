@@ -8,7 +8,6 @@ import VehicleColorPicker, { ColorOption } from "@/components/SelectColors2";
 import { SelectComponent } from "@/components/SelectComponent";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { motion } from "framer-motion";
 import {
   FUEL_TYPES,
   MARQUES,
@@ -21,13 +20,7 @@ import {
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { formatDate, formatMoney } from "@/lib/utils";
 

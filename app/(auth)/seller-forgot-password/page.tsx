@@ -14,8 +14,6 @@ const ForgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
-type forgotPasswordFormData = z.infer<typeof ForgotPasswordSchema>;
-
 export default function ForgotPasswordPage() {
   const {
     register,
@@ -42,7 +40,7 @@ export default function ForgotPasswordPage() {
         setSuccess(true);
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setError("An unexpected error occurred" + err);
     } finally {
       setIsSubmitting(false);
     }
@@ -60,7 +58,7 @@ export default function ForgotPasswordPage() {
         >
           <h1 className="text-2xl font-bold mb-4">Check Your Email</h1>
           <p className="mb-4">
-            We've sent a password reset link to your email address.
+            We &apos;ve sent a password reset link to your email address.
           </p>
           <Link
             href="/seller-login"

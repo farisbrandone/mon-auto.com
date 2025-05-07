@@ -1,6 +1,5 @@
 import * as React from "react";
 import { villesCameroun } from "@/lib/constants/carProperties";
-import { useState } from "react";
 
 import AsyncSelect from "react-select/async";
 import { FixedSizeList as List } from "react-window";
@@ -45,7 +44,7 @@ function SelectCity({
     }, 300); // Debounce delay
   };
 
-  const MenuList: React.FC<MenuListProps> = ({ children, ...props }) => {
+  const MenuList: React.FC<MenuListProps> = ({ children }) => {
     const height = 35;
     const totalHeight = React.Children.count(children) * height;
 

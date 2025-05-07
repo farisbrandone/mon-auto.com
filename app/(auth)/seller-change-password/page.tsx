@@ -1,21 +1,21 @@
 // src/app/reset-password/page.tsx
 "use client";
-
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import {
   ResetPasswordFormData,
   resetPasswordSchema,
 } from "@/lib/validations/seller";
-import { resetPassword, verifyResetToken } from "@/app/actions/auth";
+import { resetPassword } from "@/app/actions/auth";
 import { Logo } from "@/components/MyLogo";
 import { motion } from "framer-motion";
-export default function ResetPasswordPage() {
+function ResetPasswordPage() {
   const searchParams = useSearchParams();
-  const [tokenValid, setTokenValid] = useState<boolean | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
         setSuccess(true);
       }
     } catch (err) {
-      setError("An error occurred while resetting password");
+      setError("An error occurred while resetting password" + err);
     } finally {
       setIsSubmitting(false);
     }
@@ -159,5 +159,13 @@ export default function ResetPasswordPage() {
         </form>
       </motion.div>
     </div>
+  );
+}
+
+export default function page() {
+  return (
+    <Suspense>
+      <ResetPasswordPage />
+    </Suspense>
   );
 }

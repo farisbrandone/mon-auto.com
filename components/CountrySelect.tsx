@@ -2,12 +2,12 @@
 "use client";
 
 import { getNameList } from "country-list";
-import { UseFormRegister, FieldError } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 
 interface CountrySelectProps {
   id: string;
   register: UseFormRegister<any>;
-  error?: String;
+  error?: string;
   label?: string;
   required?: boolean;
   className?: string;

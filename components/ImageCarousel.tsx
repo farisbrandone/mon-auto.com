@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -8,10 +7,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Image from "next/image";
+
 import axios from "axios";
 import ImageWithSkeleton from "./ImageWithSkeleton";
 import SkeletonTrue from "./SkeletonTrue";
+import Image from "next/image";
 
 export const tab = [
   "/vehicule1.jpg",
@@ -43,7 +43,9 @@ export function ImageCaroussel({
 
         setImages(imagesUrl.data._embedded.imageAutos);
         setLoading(false);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     };
     getImagesAuto();
   }, []);
@@ -98,7 +100,9 @@ export function ImageCaroussel2({
         const imagesUrl = await axios.get(imagesAuto);
 
         setImages(imagesUrl.data._embedded.imageAutos);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     };
     getImagesAuto();
   }, []);
@@ -109,7 +113,7 @@ export function ImageCaroussel2({
         {images &&
           images.map((value, index) => (
             <CarouselItem key={index}>
-              <img
+              <Image
                 src={"/" + value.url}
                 alt=""
                 className="w-full object-cover rounded-t-lg"
@@ -138,9 +142,9 @@ export function ImageCaroussel3({
     <Carousel className={className}>
       <CarouselContent>
         {imagesAuto &&
-          imagesAuto.map((value, index) => (
+          imagesAuto.map((value) => (
             <CarouselItem key={value.id}>
-              <img
+              <Image
                 src={"/" + value.url}
                 alt=""
                 className="w-full object-cover rounded-t-lg"

@@ -18,10 +18,10 @@ export function formatMoney(
 
     const negativeSign = amount < 0 ? "-" : "";
 
-    let i = parseInt(
+    const i = parseInt(
       Math.abs(Number(amount) || 0).toFixed(decimalCount)
     ).toString();
-    let j = i.length > 3 ? i.length % 3 : 0;
+    const j = i.length > 3 ? i.length % 3 : 0;
 
     return (
       negativeSign +
@@ -51,6 +51,7 @@ export const processCatchRequest = async (
   rawData: any,
   url: string
 ) => {
+  console.log(url);
   let myError = "";
   console.error("Erreur lors de l'inscription:", error);
   if (axios.isAxiosError(error)) {

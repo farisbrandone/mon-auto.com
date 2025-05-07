@@ -11,7 +11,7 @@ const LegalNotice: NextPage = () => {
           sous le numéro 123 456 789.
         </p>
         <p>
-          <strong>Siège social :</strong> 123 Rue de l'Exemple, 75000 Paris
+          <strong>Siège social :</strong> 123 Rue de l&apos;Exemple, 75000 Paris
         </p>
         <p>
           <strong>Directeur de publication :</strong> John Doe

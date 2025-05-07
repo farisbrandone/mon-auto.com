@@ -1,5 +1,5 @@
 // app/lib/validations/seller.ts
-import { z, ZodArray, ZodType } from "zod";
+import { z } from "zod";
 import {
   MARQUES,
   TYPES_CARROSSERIE,
@@ -12,7 +12,7 @@ import {
 import { getNameList } from "country-list";
 
 export interface autoState {
-  id: String;
+  id: string;
   code: string;
   carteGriseUrl: string;
   pvControleTechniqueUrl: string;

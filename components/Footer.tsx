@@ -10,8 +10,8 @@ function Footer() {
       <div className="text-[#fff] flex flex-col  lg:w-full lg:flex-row  lg:items-center  ">
         <div className=" px-2 flex flex-col gap-1 mt-2 lg:mt-0 lg:place-items-start lg:col-span-1  w-full  mb-2 ">
           <p className="text-[16px] sm:text-[20px]  ">
-            L'équipe <span className="font-[900]">MonAuto.com</span> à votre
-            service 7j/7 et 24h/24
+            L&apos;équipe <span className="font-[900]">MonAuto.com</span> à
+            votre service 7j/7 et 24h/24
           </p>
           <div className="flex flex-col sm:gap-3 sm:flex-row">
             <p className="  font-black mb-1 lg:mb-2 underline ">

@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { Hamburger } from "./icon/Hamburger";
+
 import { Message } from "./icon/Message";
 import { DropdownMenuDemo } from "./ButtonHamburger";
 import Link from "next/link";
 import { Plus } from "./icon/Plus";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 function HeaderCars() {
   const router = useRouter();
@@ -20,7 +21,7 @@ function HeaderCars() {
         <Message width={35} height={35} color="white" />
       </div>
 
-      <img
+      <Image
         src="/logo.png"
         alt=""
         className="w-[100px] h-[100px] object-cover cursor-pointer "

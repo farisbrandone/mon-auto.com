@@ -15,7 +15,7 @@ const PrivacyPolicy: NextPage = () => {
         <h2 className="text-xl font-semibold mb-3">1. Données collectées</h2>
         <p className="text-gray-700">
           Nous collectons uniquement les données nécessaires au fonctionnement
-          de l'application (ex: email pour l'authentification).
+          de l&apos;application (ex: email pour l&apos;authentification).
         </p>
       </section>
 
@@ -40,8 +40,8 @@ const PrivacyPolicy: NextPage = () => {
       <section>
         <h2 className="text-xl font-semibold mb-3">4. Vos droits (RGPD)</h2>
         <p className="text-gray-700">
-          Vous pouvez demander l'accès, la modification ou la suppression de vos
-          données via{" "}
+          Vous pouvez demander l&apos;accès, la modification ou la suppression
+          de vos données via{" "}
           <Link href="/contact" className="text-blue-600 hover:underline">
             notre formulaire de contact
           </Link>

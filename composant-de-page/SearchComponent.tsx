@@ -20,7 +20,13 @@ import {
 import { Search } from "lucide-react";
 import Link from "next/link";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { formatDate, formatMoney } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -49,7 +55,7 @@ export interface SearchCriteria {
   // Add other search criteria as needed
 }
 
-function SearchComponent() {
+function SearchComponent1() {
   const {
     register,
     handleSubmit,
@@ -778,6 +784,14 @@ function SearchComponent() {
 
       <Footer />
     </div>
+  );
+}
+
+function SearchComponent() {
+  return (
+    <Suspense>
+      <SearchComponent1 />
+    </Suspense>
   );
 }
 

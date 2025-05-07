@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Telephone } from "./icon/Telephone";
 import { Localisation } from "./icon/Localisation";
 import { Button } from "./ui/button";
-import { ImageCaroussel } from "./ImageCarousel";
 
 function CardCars() {
-  const [position, setPosition] = useState(0);
   return (
     <div className="flex flex-col items-center max-w-xl mx-auto px-1">
       {/*  <ImageCaroussel

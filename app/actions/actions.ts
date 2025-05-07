@@ -1,27 +1,20 @@
 // app/actions.ts
 "use server";
 
-import {
-  RegisterFormData,
-  SellerFormData,
-  SellerUpdateFormData,
-} from "@/lib/validations/seller";
 import axios from "axios";
 import { redirect } from "next/navigation";
 
 //import { hash } from "bcryptjs";
 
 export async function registerSeller(formData: FormData) {
-  let carte_grise = formData.get("carteGrise") as File | null;
-  let pv_controle_technique = formData.get(
-    "pvControleTechnique"
-  ) as File | null;
+  let carte_grise = formData.get("carteGrise") as any;
+  let pv_controle_technique = formData.get("pvControleTechnique") as any;
   const size = formData.get("size_image");
   console.log(size);
-  const images_auto: File[] = [];
+  const images_auto: any[] = [];
   if (size && Number(size) !== 0) {
     for (let i = 0; i < Number(size); i++) {
-      const value = formData.get("imagesAuto" + i) as File;
+      const value = formData.get("imagesAuto" + i) as any;
       images_auto.push(value);
     }
   }
@@ -160,7 +153,7 @@ export async function registerSeller(formData: FormData) {
               console.log({ zouk: response2.data });
             }
           } catch (error) {
-            console.log("rateeeeeeeeeeeeee");
+            console.log(error);
             // redirect("/seller-login");
           }
         }
@@ -183,7 +176,7 @@ export async function registerSeller(formData: FormData) {
 }
 export interface imageType {
   url: string;
-  id: String;
+  id: string;
 }
 
 export const updateSellerAuto = async (formData: FormData, id: string) => {
@@ -221,14 +214,14 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
       ? "ELECTRIQUE"
       : "GPL";
 
-  const toto = formData.get("typeTransmission");
-  const trans =
+  /*  const toto = formData.get("typeTransmission"); */
+  /*  const trans =
     toto === "Manuelle"
       ? "TRANSMISSION_MANUELLE"
       : toto === "Automatique"
       ? "TRANSMISSION_AUTOMATIQUE"
       : "TRANSMISSION_SEMI_AUTOMATIQUE";
-
+ */
   // Convertir FormData en objet
   const rawData = {
     id: Number(id),
@@ -387,6 +380,7 @@ export async function sendContact(formData: FormData) {
       throw new Error("problème de connexion");
     }
   } catch (error) {
+    console.log(error);
     throw new Error("Une erreur est survenue");
   }
 }
@@ -461,10 +455,12 @@ export const getDataAsync = async (token: any) => {
               throw new Error("problème de connexion");
             }
           } catch (error) {
+            console.log(error);
             redirect("/seller-login");
           }
         }
       } else if (error.request) {
+        console.log(error);
         // Request was made but no response received
         console.error("No response received:", error.request);
         myError = error.message;
@@ -564,6 +560,7 @@ export const getUserDataAsync = async (token: any, userId: string) => {
               throw new Error("problème de connexion");
             }
           } catch (error) {
+            console.log(error);
             redirect("/seller-login");
           }
         }

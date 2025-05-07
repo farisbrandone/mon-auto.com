@@ -1,19 +1,13 @@
 import * as React from "react";
-import AsyncSelect from "react-select/async";
+
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  COULEURS,
-  COULEURS2,
-  searchValue,
-} from "@/lib/constants/carProperties";
+import { COULEURS2, searchValue } from "@/lib/constants/carProperties";
 import clsx from "clsx";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { searchSchema } from "@/lib/validations/seller";
@@ -22,7 +16,7 @@ import { z } from "zod";
 export function SelectComponent({
   variable,
   placeholder,
-  myValue,
+
   register,
   fieldForm,
   errors,
@@ -95,10 +89,14 @@ export function SelectCouleur({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="w-full">
-        {variable.sort().map((value) => {
+        {variable.sort().map((value, index) => {
           const color = value.hex;
           return (
-            <SelectItem value={value.name + "-" + value.hex} className="w-full">
+            <SelectItem
+              key={index}
+              value={value.name + "-" + value.hex}
+              className="w-full"
+            >
               {" "}
               <div className="flex-1 flex items-center justify-between w-full gap-4">
                 <p> {value.name} </p>

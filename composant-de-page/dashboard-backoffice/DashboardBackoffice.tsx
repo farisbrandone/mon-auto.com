@@ -12,25 +12,28 @@ export default function DashboardBackoffice() {
 
   const [loading, setLoading] = useState(false);
   const [loadingFail, setLoadingFail] = useState(false);
-  const [tokenState, setTokenState] = useState(
-    localStorage.getItem("mon-auto-token")
-  );
+  const [tokenState, setTokenState] = useState("");
 
   useEffect(() => {
     const getDataAsyncFront = async () => {
       try {
         setLoading(true);
-
+        const saved = window.localStorage.getItem("mon-auto-token");
+        if (saved) {
+          setTokenState(saved);
+        } else {
+          return;
+        }
         /* 
        { success: true, data: newAutos, error: null, token: null };
        */
 
-        const response = await getDataAsync(tokenState);
+        const response = await getDataAsync(saved);
         const newAutos = response.data;
         console.log({ newAutos });
         setUserData([...newAutos]);
         if (response.token) {
-          localStorage.setItem(
+          window.localStorage.setItem(
             "mon-auto-token",
             JSON.stringify(response.token)
           );

@@ -53,7 +53,7 @@ export async function registerUser(formData: FormData) {
     email: formData.get("email"),
     identificationDocumentFile: formData.get(
       "identificationDocumentFile"
-    ) as File,
+    ) as any,
     description: formData.get("description"),
     typeSeller: formData.get("typeSeller"),
     adresse: formData.get("adresse"),
@@ -224,6 +224,7 @@ export async function verifyResetToken(token: string) {
   /*  const existingToken = await db.passwordResetToken.findUnique({
     where: { token }
   }); */
+  console.log(token);
 
   if (2 == 2 /* !existingToken */) {
     return { error: "Invalid token!" };

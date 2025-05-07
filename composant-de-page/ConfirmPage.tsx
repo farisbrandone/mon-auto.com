@@ -1,7 +1,7 @@
 "use client";
-
+import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { z } from "zod";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -9,7 +9,7 @@ import { confirmAction } from "@/app/actions/actions";
 
 // Schéma de validation
 
-export default function ConfirmPage() {
+function ConfirmPage1() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -176,5 +176,13 @@ export default function ConfirmPage() {
         <h1 className="text-2xl font-bold mb-4">Validation du token...</h1>
       </motion.div>
     </div>
+  );
+}
+
+export default function ConfirmPage() {
+  return (
+    <Suspense>
+      <ConfirmPage1 />
+    </Suspense>
   );
 }
