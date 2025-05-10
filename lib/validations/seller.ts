@@ -202,11 +202,11 @@ export const RegisterSchema = z
       .refine(
         (file) => file.size <= 5 * 1024 * 1024,
         "Le fichier doit faire moins de 5MB"
-      )
-      .refine(
+      ),
+      /* .refine(
         (file) => file.type === "application/pdf",
         "Seuls les fichiers PDF sont acceptés"
-      ),
+      ), */
     description: z
       .string()
       .min(10, "La description doit contenir au moins 10 caractères"),

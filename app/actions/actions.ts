@@ -52,12 +52,11 @@ export async function registerSeller(formData: FormData) {
     devise: formData.get("devise"),
     immatriculation: formData.get("immatriculation"),
     acceptsTerms: formData.get("acceptsTerms") === "on",
-    carteGriseUrl: carte_grise?.name,
-    pvControleTechniqueUrl: pv_controle_technique?.name,
-    imagesAuto: images_auto
-      .filter((file) => file.size > 0)
-      .map((val) => val.name),
-    statusOfAuto: formData.get("statusOfAuto"),
+    carteGriseUrl: carte_grise /* ?.name */,
+    pvControleTechniqueUrl: pv_controle_technique /* ?.name */,
+    imagesAuto: images_auto,
+    /*  .filter((file) => file.size > 0)
+      .map((val) => val.name) */ statusOfAuto: formData.get("statusOfAuto"),
     anneeDeFabrication: new Date(
       formData.get("anneeDeFabrication") as string
     ).toISOString(),
@@ -972,5 +971,87 @@ export const confirmAction = async (token: string) => {
     return { status: response.status };
   } catch (error) {
     throw error;
+  }
+};
+
+export const refreshToken = async (token: any) => {
+  try {
+    const response = await axios.get(`http://localhost:8090/refreshToken`, {
+      headers: {
+        Authorization: `Bearer ${token["refresh-token"]}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteFile = async (token: any, fileName: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:8090/deleteFile?fileName=${fileName}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token["access-token"]}`,
+        },
+      }
+    );
+    return { success: true, error: null, data: response.data, token: null };
+  } catch (error) {
+    let myError = "";
+
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          console.error("Erreur lors de l'inscription:");
+          try {
+            const response = await axios.get(
+              `http://localhost:8090/refreshToken`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token["refresh-token"]}`,
+                },
+              }
+            );
+            console.log(response.data["access-token"]);
+            const response2 = await axios.delete(
+              `http://localhost:8090/deleteFile?fileName=${fileName}`,
+
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log("toutou");
+            if (response2.status === 200) {
+              console.log("nounou");
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+          }
+        }
+      } else if (error.request) {
+        myError = error.message;
+      } else {
+        myError = error.message;
+      }
+    } else {
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
   }
 };

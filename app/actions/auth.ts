@@ -51,9 +51,7 @@ export async function registerUser(formData: FormData) {
     nom: formData.get("nom"),
     prenom: formData.get("prenom"),
     email: formData.get("email"),
-    identificationDocumentFile: formData.get(
-      "identificationDocumentFile"
-    ) as any,
+    identificationDocumentFile: formData.get("identificationDocumentFile"),
     description: formData.get("description"),
     typeSeller: formData.get("typeSeller"),
     adresse: formData.get("adresse"),
@@ -76,7 +74,7 @@ export async function registerUser(formData: FormData) {
       "http://localhost:8090/signup",
       {
         ...rawData,
-        identificationDocumentFile: rawData.identificationDocumentFile.name,
+        /* identificationDocumentFile: rawData.identificationDocumentFile.name, */
       },
       {
         headers: {

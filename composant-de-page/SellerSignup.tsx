@@ -18,6 +18,10 @@ import { CountrySelect } from "@/components/CountrySelect";
 import { PhoneInput } from "@/components/PhoneInput";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import Link from "next/link";
+import { fileResponseType } from "./AddAutoPage";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function SellerSigup() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -25,6 +29,10 @@ export default function SellerSigup() {
   const [errorSend, setErrorSend] = useState("");
   const [successSend, setSuccessSend] = useState(false);
   const [transitionForAdd, setTransitionForAdd] = useState(false);
+  const fileInputRefDoc = useRef<HTMLInputElement>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [downloadUrl, setDownloadUrl] = useState<fileResponseType>();
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
   const {
     register,
@@ -39,6 +47,61 @@ export default function SellerSigup() {
       activeState: false,
     },
   });
+
+  const handleFileDoc = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    //beginning get url of pv
+    console.log("net net");
+    const mm = e.target.files;
+    const docControlFormData = new FormData();
+    if (!mm) return;
+    if (mm[0].size >5 * 1024 * 1024){
+      toast.error("Le fichier t")
+    }
+    docControlFormData.append("file", mm[0]);
+    setValue("identificationDocumentFile", mm[0]);
+
+    try {
+      setIsUploading(true);
+      const responsePv = await axios.post(
+        "/api/upload-file",
+        docControlFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            console.log(progressEvent);
+            if (progressEvent.total) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / (progressEvent.total || 1)
+              );
+              setUploadProgress(percentCompleted);
+            }
+          },
+        }
+      );
+
+      const keys = Object.keys(responsePv.data);
+      const values = Object.values(responsePv.data) as string[];
+
+      setDownloadUrl(
+        { url: values[0], originalName: keys[0] }
+
+        /* responsePv.data */
+      );
+
+      if (fileInputRefDoc.current) {
+        fileInputRefDoc.current.value = "";
+      }
+      setIsUploading(false);
+    } catch (error) {
+      setIsUploading(false);
+      console.log(error);
+      toast.error("Une erreur est survenue pendant le téléchargement");
+    }
+
+    //end get url of pv
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -61,7 +124,11 @@ export default function SellerSigup() {
     formData.set("nom", data.nom);
     formData.set("prenom", data.prenom);
     formData.set("email", data.email);
-    formData.set("identificationDocumentFile", data.identificationDocumentFile);
+    formData.set(
+      "identificationDocumentFile",
+      downloadUrl?.url + "--" + downloadUrl?.originalName
+    );
+    //formData.set("identificationDocumentFile", data.identificationDocumentFile);
     formData.set("description", data.description);
     formData.set("typeSeller", data.typeSeller);
     formData.set("adresse", data.adresse);
@@ -108,7 +175,7 @@ export default function SellerSigup() {
 
   if (successSend) {
     return (
-      <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
+      <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[14px] sm:text-[16px] ">
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
@@ -285,15 +352,52 @@ export default function SellerSigup() {
               >
                 Insérer le document pour identification choisis *
               </label>
-              <div className="mt-1 flex items-center">
+              <div className="mt-1 flex items-center text-[14px]">
                 <input
                   id="file"
                   type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
+                  ref={fileInputRefDoc}
+                  onChange={handleFileDoc}
+                  /*   onChange={(e) => {
+                    if (e.target.files?.[0]) {
+                      setValue("identificationDocumentFile", e.target.files[0]);
+                    }
+                  }} */
                   className="hidden"
                 />
-                <button
+
+                <Button
+                  type="button"
+                  onClick={() => {
+                    fileInputRefDoc.current?.click();
+                  }}
+                  className="mt-1 inline-flex items-center px-1 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-slate-200  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                  disabled={isUploading}
+                >
+                  {isUploading ? "En cours..." : "Télécharger"}
+                </Button>
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <div className="progress-bar">
+                    <div style={{ width: `${uploadProgress}%` }}>
+                      {uploadProgress}%
+                    </div>
+                  </div>
+                )}
+
+                {downloadUrl && (
+                  <a
+                    href={downloadUrl.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-600 "
+                  >
+                    {downloadUrl.originalName}
+                  </a>
+                )}
+
+                <p className=" text-gray-500 ml-1">jusqu'à 10MB</p>
+
+                {/*  <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -302,7 +406,7 @@ export default function SellerSigup() {
                 </button>
                 <span className="ml-2 text-sm text-gray-500">
                   {fileName || "Aucun fichier sélectionné"}
-                </span>
+                </span> */}
               </div>
               {errors.identificationDocumentFile && (
                 <p className="mt-1 text-sm text-red-600">

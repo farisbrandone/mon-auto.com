@@ -14,7 +14,11 @@ import {
   CURRENCIES,
   MILEAGE_UNITS,
 } from "@/lib/constants/carProperties";
-import { registerSeller } from "@/app/actions/actions"; // À implémenter
+import {
+  deleteFile,
+  refreshToken,
+  registerSeller,
+} from "@/app/actions/actions"; // À implémenter
 import Image from "next/image";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import MyLogo from "@/components/MyLogo";
@@ -28,6 +32,24 @@ import { motion } from "framer-motion";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
+import axios from "axios";
+import { toast } from "sonner";
+import { CrossIcon, LoaderCircleIcon } from "lucide-react";
+import DeleteImageMultiple from "@/components/DeleteImageMultiple";
+
+export interface UploadProgress {
+  fileName: string;
+  progress: number;
+  downloadUrl?: string;
+  error?: string;
+  originalName?: string;
+}
+
+export type fileResponseType = {
+  originalName: string;
+  url: string;
+};
+
 export default function AddAutoPage() {
   const {
     register,
@@ -59,8 +81,23 @@ export default function AddAutoPage() {
   const mileageUnit = watch("kilometrageUnit");
   const marques = watch("marques");
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const images_autoInputRef = useRef<HTMLInputElement>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadProgressPv, setUploadProgressPv] = useState<number>(0);
+  const [downloadUrlCartegrise, setDownloadUrlCartegrise] =
+    useState<fileResponseType>();
+  const [downloadUrlPv, setDownloadUrlPv] = useState<fileResponseType>();
+  const [error, setError] = useState<string>("");
+  const fileInputRef2Carte = useRef<HTMLInputElement>(null);
+  const fileInputRefPv = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingPv, setIsUploadingPv] = useState(false);
+  const [isUploadingCarte, setIsUploadingCarte] = useState(false);
+  const [isDeleteCarte, setIsDeleteCarte] = useState(false);
+  const [isDeletePv, setIsDeletePv] = useState(false);
+  const [uploadProgressMultiple, setUploadProgressMultiple] = useState<
+    UploadProgress[]
+  >([]);
   const router = useRouter();
   const handleMarqueAuto = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -76,110 +113,254 @@ export default function AddAutoPage() {
     setValue("couleurInt", value);
   };
 
-  const onSubmit = async (data: SellerFormData) => {
-    const formData = new FormData();
-
-    //formData.set("companyName", data.companyName);
-    //formData.set("email", data.email);
-    //formData.set("phone", data.phone);
-    //formData.set("password", data.password);
-    //formData.set("confirmPassword", data.confirmPassword);
-    if (!localStorage.getItem("mon-auto-token")) {
-      router.push("/seller-signup");
+  const handleFilePv = async (e: ChangeEvent<HTMLInputElement>) => {
+    //beginning get url of pv
+    const mm = e.target.files;
+    const pvControlFormData = new FormData();
+    if (!mm) return;
+    if (mm[0].size > 10 * 1024 * 1024) {
+      toast.error("La taille du fichier est supérieur à 10Mo");
     }
-    const token = JSON.parse(localStorage.getItem("mon-auto-token") as string);
-    console.log(token);
-    if (!data.carteGrise || !data.pvControleTechnique || !data.imagesAuto) {
-      alert(
-        "vérifier l'insertion des fichiers carte grise, pv controle technique et images de l'auto"
-      );
-      return;
-    }
+    setValue("pvControleTechnique", mm[0]);
+    pvControlFormData.append("file", mm[0]);
 
-    if (!selectedCity) {
-      alert("Vous n'avez pas insérer la ville ou se trouve l'auto.");
-      return;
-    }
-    formData.set("mon-refresh-token", token["refresh-token"]);
-    formData.set("mon-auto-token", token["access-token"]);
-    formData.set("villeDuBien", selectedCity.city);
-    formData.set("nbreDePlace", data.nbreDePlace.toString());
-    formData.set("nbreDePorte", data.nbreDePorte.toString());
-    formData.set("marques", autreAuto ? autreAuto : data.marques);
-    formData.set(
-      "typesCarrosserie",
-      data.typesCarrosserie ? data.typesCarrosserie : ""
-    );
-    formData.set("typeCarburant", data.typeCarburant.toUpperCase());
-    formData.set("prix", data.prix.toString());
-    formData.set("devise", data.devise);
-    formData.set(
-      "typeTransmission",
-      "TRANSMISSION_" + data.typeTransmission.toUpperCase()
-    );
-    formData.set(
-      "kilometrage",
-      data.kilometrage ? data.kilometrage.toString() : ""
-    );
-    formData.set(
-      "kilometrageUnit",
-      data.kilometrageUnit ? data.kilometrageUnit : ""
-    );
-    formData.set(
-      "typeDeTrainConducteur",
-      data.typeDeTrainConducteur ? data.typeDeTrainConducteur : ""
-    );
-
-    formData.set(
-      "conso100kmAutoRoute",
-      data.conso100kmAutoRoute ? data.conso100kmAutoRoute.toString() : ""
-    );
-
-    formData.set(
-      "conso100kmVille",
-      data.conso100kmVille ? data.conso100kmVille.toString() : ""
-    );
-
-    formData.set(
-      "tailleDuMoteur",
-      data.tailleDuMoteur ? data.tailleDuMoteur.toString() : ""
-    );
-
-    formData.set("couleurInt", data.couleurInt ? data.couleurInt : "");
-    formData.set("couleurExt", data.couleurExt ? data.couleurExt : "");
-    formData.set("typeMoteur", data.typeMoteur);
-    formData.set("statusOfAuto", data.statusOfAuto);
-    formData.set("pvControleTechnique", data.pvControleTechnique as Blob);
-    formData.set("carteGrise", data.carteGrise as Blob);
-    formData.set(
-      "anneeDeFabrication",
-      data.anneeDeFabrication ? data.anneeDeFabrication.toUTCString() : ""
-    );
-    formData.set("model", data.model);
-    formData.set(
-      "lastMaintenanceDate",
-      data.lastMaintenanceDate ? data.lastMaintenanceDate.toUTCString() : ""
-    );
-    formData.set(
-      "immatriculation",
-      data.immatriculation ? data.immatriculation : ""
-    );
-    if (data.imagesAuto) {
-      let i: number = 0;
-      console.log(data.imagesAuto);
-      for (let image of data.imagesAuto) {
-        formData.set("imagesAuto" + i, image as Blob);
-        i++;
+    try {
+      setIsUploadingPv(true);
+      if (!localStorage.getItem("mon-auto-token")) {
+        router.push("/seller-signup");
       }
-      formData.set("size_image", data.imagesAuto.length.toString());
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
+      );
+      const tokenRefresh = await refreshToken(token);
+      if (tokenRefresh) {
+        console.log("lolo");
+        const val = JSON.stringify(tokenRefresh);
+        localStorage.setItem("mon-auto-token", val);
+      }
+
+      const responsePv = await axios.post(
+        "/api/upload-file",
+        pvControlFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenRefresh["access-token"]}`,
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const progress = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgressPv(progress);
+            }
+          },
+        }
+      );
+
+      const keys = Object.keys(responsePv.data);
+      const values = Object.values(responsePv.data) as string[];
+
+      setDownloadUrlPv(
+        { url: values[0], originalName: keys[0] }
+
+        /* responsePv.data */
+      );
+
+      if (fileInputRefPv.current) {
+        fileInputRefPv.current.value = "";
+      }
+      setIsUploading(false);
+    } catch (error) {
+      setIsUploading(false);
+      toast.error("Une erreur est survenue pendant la suppression");
+      console.log(error);
     }
 
-    if (data.acceptsTerms) {
-      formData.set("acceptsTerms", "on");
-    } else {
-      formData.set("acceptsTerms", "off");
+    //end get url of pv
+  };
+
+  const handleFileCarteGrise = async (e: ChangeEvent<HTMLInputElement>) => {
+    //beginning get url of carte grise
+    const mm = e.target.files;
+    const carteGriseFormData = new FormData();
+
+    if (!mm) return;
+    if (mm[0].size > 10 * 1024 * 1024) {
+      toast.error("La taille du fichier est supérieur à 10Mo");
     }
-    /* === "on" */ try {
+    setValue("carteGrise", mm[0]);
+    carteGriseFormData.append("file", mm[0]);
+
+    try {
+      setIsUploadingCarte(true);
+      if (!localStorage.getItem("mon-auto-token")) {
+        router.push("/seller-signup");
+      }
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
+      );
+      const tokenRefresh = await refreshToken(token);
+      if (tokenRefresh) {
+        console.log("lolo");
+        const val = JSON.stringify(tokenRefresh);
+        localStorage.setItem("mon-auto-token", val);
+      }
+
+      const response = await axios.post(
+        "/api/upload-file",
+        carteGriseFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenRefresh["access-token"]}`,
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const progress = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgress(progress);
+            }
+          },
+        }
+      );
+
+      const keys = Object.keys(response.data);
+      const values = Object.values(response.data) as string[];
+
+      setDownloadUrlCartegrise(
+        { url: values[0], originalName: keys[0] }
+
+        /* responsePv.data */
+      );
+
+      if (fileInputRef2Carte.current) {
+        fileInputRef2Carte.current.value = "";
+      }
+      setIsUploadingCarte(false);
+    } catch (error) {
+      setIsUploadingCarte(false);
+      toast.error("Une erreur est survenue pendant la suppression de l'image");
+      console.log(error);
+    }
+    //end get url of carte grise
+  };
+
+  const onSubmit = async (data: SellerFormData) => {
+    try {
+      const formData = new FormData();
+
+      if (!localStorage.getItem("mon-auto-token")) {
+        router.push("/seller-signup");
+      }
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
+      );
+      console.log(token);
+      if (!data.carteGrise || !data.pvControleTechnique || !data.imagesAuto) {
+        alert(
+          "vérifier l'insertion des fichiers carte grise, pv controle technique et images de l'auto"
+        );
+        return;
+      }
+
+      if (!selectedCity) {
+        alert("Vous n'avez pas insérer la ville ou se trouve l'auto.");
+        return;
+      }
+
+      formData.set("mon-refresh-token", token["refresh-token"]);
+      formData.set("mon-auto-token", token["access-token"]);
+      formData.set("villeDuBien", selectedCity.city);
+      formData.set("nbreDePlace", data.nbreDePlace.toString());
+      formData.set("nbreDePorte", data.nbreDePorte.toString());
+      formData.set("marques", autreAuto ? autreAuto : data.marques);
+      formData.set(
+        "typesCarrosserie",
+        data.typesCarrosserie ? data.typesCarrosserie : ""
+      );
+      formData.set("typeCarburant", data.typeCarburant.toUpperCase());
+      formData.set("prix", data.prix.toString());
+      formData.set("devise", data.devise);
+      formData.set(
+        "typeTransmission",
+        "TRANSMISSION_" + data.typeTransmission.toUpperCase()
+      );
+      formData.set(
+        "kilometrage",
+        data.kilometrage ? data.kilometrage.toString() : ""
+      );
+      formData.set(
+        "kilometrageUnit",
+        data.kilometrageUnit ? data.kilometrageUnit : ""
+      );
+      formData.set(
+        "typeDeTrainConducteur",
+        data.typeDeTrainConducteur ? data.typeDeTrainConducteur : ""
+      );
+
+      formData.set(
+        "conso100kmAutoRoute",
+        data.conso100kmAutoRoute ? data.conso100kmAutoRoute.toString() : ""
+      );
+
+      formData.set(
+        "conso100kmVille",
+        data.conso100kmVille ? data.conso100kmVille.toString() : ""
+      );
+
+      formData.set(
+        "tailleDuMoteur",
+        data.tailleDuMoteur ? data.tailleDuMoteur.toString() : ""
+      );
+
+      formData.set("couleurInt", data.couleurInt ? data.couleurInt : "");
+      formData.set("couleurExt", data.couleurExt ? data.couleurExt : "");
+      formData.set("typeMoteur", data.typeMoteur);
+      formData.set("statusOfAuto", data.statusOfAuto);
+      formData.set(
+        "pvControleTechnique",
+        downloadUrlPv?.url + "--" + downloadUrlPv?.originalName
+      );
+      formData.set(
+        "carteGrise",
+        downloadUrlCartegrise?.url + "--" + downloadUrlCartegrise?.originalName
+      );
+      formData.set(
+        "anneeDeFabrication",
+        data.anneeDeFabrication ? data.anneeDeFabrication.toUTCString() : ""
+      );
+      formData.set("model", data.model);
+      formData.set(
+        "lastMaintenanceDate",
+        data.lastMaintenanceDate ? data.lastMaintenanceDate.toUTCString() : ""
+      );
+      formData.set(
+        "immatriculation",
+        data.immatriculation ? data.immatriculation : ""
+      );
+
+      if (uploadProgressMultiple) {
+        let i: number = 0;
+        console.log(uploadProgressMultiple);
+        for (let image of uploadProgressMultiple) {
+          if (image.downloadUrl && image.originalName)
+            formData.set(
+              "imagesAuto" + i,
+              image.downloadUrl + "--" + image.originalName
+            );
+          i++;
+        }
+        formData.set("size_image", uploadProgressMultiple.length.toString());
+      }
+
+      if (data.acceptsTerms) {
+        formData.set("acceptsTerms", "on");
+      } else {
+        formData.set("acceptsTerms", "off");
+      }
+      /* === "on" */
       const result = await registerSeller(formData);
       if (result.token) {
         console.log("lolo");
@@ -189,10 +370,180 @@ export default function AddAutoPage() {
       reset();
       setValue("devise", "FCFA");
       setValue("kilometrageUnit", "km");
+      router.push("/transition-add-auto");
       //Rediriger ou afficher un message de succès
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
       // Afficher une erreur à l'utilisateur
+    }
+  };
+
+  //beginning handle multiple file upload
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const mm = e.target.files;
+    if (!mm) return;
+    if (mm.length <= 0) return;
+    if (mm.length > 8) {
+      toast.error("Plus de 8 images ont été télécharger");
+      return;
+    }
+
+    setIsUploading(true);
+
+    const files = Array.from(mm);
+    const myFile = files.find((val) => val.size > 5 * 1024 * 1024);
+    if (myFile) {
+      toast.error("Vous avez au moins une image de taille supérieur à 5Mo");
+      return;
+    }
+    setValue("imagesAuto", files);
+
+    // Initialize progress tracking for each file
+
+    const myProgress = files.map((file) => ({
+      fileName: file.name,
+      progress: 0,
+    }));
+    setUploadProgressMultiple((prev) => [...prev, ...myProgress]);
+
+    try {
+      // Upload files sequentially (for better progress tracking)
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append("files", file); // Note 'files' instead of 'file'
+        if (!localStorage.getItem("mon-auto-token")) {
+          router.push("/seller-signup");
+        }
+        const token = JSON.parse(
+          localStorage.getItem("mon-auto-token") as string
+        );
+
+        const tokenRefresh = await refreshToken(token);
+        if (tokenRefresh) {
+          console.log("lolo");
+          const val = JSON.stringify(tokenRefresh);
+          localStorage.setItem("mon-auto-token", val);
+        }
+
+        await axios
+          .post("/api/multiple-upload-file", formData, {
+            headers: {
+              Authorization: `Bearer ${tokenRefresh["access-token"]}`,
+              "Content-Type": "multipart/form-data",
+            },
+            onUploadProgress: (progressEvent) => {
+              if (progressEvent.total) {
+                const progress = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total
+                );
+                setUploadProgressMultiple((prev) =>
+                  prev.map((item) =>
+                    item.fileName === file.name ? { ...item, progress } : item
+                  )
+                );
+              }
+            },
+          })
+          .then((response) => {
+            const keys = Object.keys(response.data);
+            const values = Object.values(response.data) as string[];
+            setUploadProgressMultiple((prev) =>
+              prev.map((item) =>
+                item.fileName === file.name
+                  ? { ...item, downloadUrl: values[0], originalName: keys[0] }
+                  : item
+              )
+            );
+          })
+          .catch((error) => {
+            setUploadProgressMultiple((prev) =>
+              prev.map((item) =>
+                item.fileName === file.name
+                  ? { ...item, error: "Upload failed" }
+                  : item
+              )
+            );
+            console.error(`Error uploading ${file.name}:`, error);
+          });
+      }
+      toast.success("Le téléchargement s'est effectué avec success");
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast.error("Une erreur est survenue pendant la téléchargement");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  //end handleMultipleFileUpload
+
+  const deletePvFile = async (fileName: string) => {
+    try {
+      setIsDeletePv(true);
+      if (!localStorage.getItem("mon-auto-token")) {
+        router.push("/seller-signup");
+      }
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
+      );
+      const response = await deleteFile(token, fileName);
+
+      if (response.success) {
+        if (response.token) {
+          console.log("lolo");
+          const val = JSON.stringify(response.token);
+          localStorage.setItem("mon-auto-token", val);
+        }
+
+        setValue("pvControleTechnique", undefined);
+        if (fileInputRefPv.current) {
+          fileInputRefPv.current.value = "";
+        }
+        setIsDeletePv(false);
+        toast.success("Image supprimé avec success");
+        return;
+      }
+      throw new Error("");
+    } catch (error) {
+      console.log(error);
+      setIsDeletePv(false);
+      toast.error("Une erreur est survenue pendant la suppression");
+    }
+  };
+
+  const deleteCarteFile = async (fileName: string) => {
+    try {
+      setIsDeleteCarte(true);
+      if (!localStorage.getItem("mon-auto-token")) {
+        router.push("/seller-signup");
+      }
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
+      );
+      const response = await deleteFile(token, fileName);
+
+      if (response.success) {
+        if (response.token) {
+          console.log("lolo");
+          const val = JSON.stringify(response.token);
+          localStorage.setItem("mon-auto-token", val);
+        }
+
+        setValue("carteGrise", undefined);
+        if (fileInputRef2Carte.current) {
+          fileInputRef2Carte.current.value = "";
+        }
+        setIsDeleteCarte(false);
+        toast.success("Image supprimé avec success");
+        return;
+      }
+      throw new Error("");
+    } catch (error) {
+      console.log(error);
+      setIsDeleteCarte(false);
+      toast.error("Une erreur est survenue pendant la suppression");
     }
   };
 
@@ -776,43 +1127,71 @@ export default function AddAutoPage() {
               Insérer la Carte grise du véhicule
             </label>
             <div className="mt-1 flex items-center">
-              {carte_grise ? (
+              {carte_grise && downloadUrlCartegrise ? (
                 <div className="flex items-center gap-4">
                   <p>{carte_grise.name}</p>
                   <button
                     type="button"
                     onClick={() => {
-                      setValue("carteGrise", undefined);
-                      if (fileInputRef.current) {
-                        fileInputRef.current.value = "";
-                      }
+                      deleteCarteFile(downloadUrlCartegrise.url);
                     }}
-                    className="text-sm text-red-600 hover:text-red-800"
+                    className="text-sm text-red-600 hover:text-red-800 disabled:text-red-400 disabled:cursor-not-allowed disabled:hover:text-red-400"
+                    disabled={isDeleteCarte}
                   >
-                    Supprimer
+                    {isDeleteCarte ? <LoaderCircleIcon /> : "Supprimer"}
                   </button>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
                   <div className="flex text-sm text-gray-600">
-                    <label
+                    {/*  <label
                       htmlFor="carteGrise"
                       className="relative cursor-pointer rounded-md  font-medium text-blue-600 hover:text-blue-500 bg-slate-200 p-2"
+                    > */}
+                    {/*  <span>Télécharger un fichier</span> */}
+                    <input
+                      id="carteGrise"
+                      type="file"
+                      /* accept="image/jpeg, image/png, image/webp" */
+                      className="sr-only"
+                      ref={fileInputRef2Carte}
+                      onChange={(e) => {
+                        handleFileCarteGrise(e);
+                      }}
+                    />
+                    {/*  </label> */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        fileInputRef2Carte.current?.click();
+                      }}
+                      className="mt-1 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-slate-200  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer disabled:cursor-not-allowed"
+                      disabled={isUploadingCarte}
                     >
-                      <span>Télécharger un fichier</span>
-                      <input
-                        id="carteGrise"
-                        type="file"
-                        /* accept="image/jpeg, image/png, image/webp" */
-                        className="sr-only"
-                        ref={fileInputRef}
-                        onChange={(e) => {
-                          if (e.target.files?.[0]) {
-                            setValue("carteGrise", e.target.files[0]);
-                          }
-                        }}
-                      />
-                    </label>
+                      {isUploadingCarte
+                        ? "En cours..."
+                        : "Télécharger des fichiers"}
+                    </button>
+                    {uploadProgress > 0 && uploadProgress < 100 && (
+                      <div className="progress-bar">
+                        <div style={{ width: `${uploadProgress}%` }}>
+                          {uploadProgress}%
+                        </div>
+                      </div>
+                    )}
+
+                    {downloadUrlCartegrise && (
+                      <div className="success-message">
+                        <p>File uploaded successfully!</p>
+                        <a
+                          href={downloadUrlCartegrise.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View/Download File
+                        </a>
+                      </div>
+                    )}
                   </div>
                   <p className="text-xs text-gray-500">jusqu'à 10MB</p>
                 </div>
@@ -831,43 +1210,71 @@ export default function AddAutoPage() {
               Insérer le Procès verbal du controle technique du véhicule
             </label>
             <div className="mt-1 flex items-center">
-              {pv_controle_technique ? (
+              {pv_controle_technique && downloadUrlPv ? (
                 <div className="flex items-center gap-4">
                   <p>{pv_controle_technique.name} </p>
                   <button
                     type="button"
                     onClick={() => {
-                      setValue("pvControleTechnique", undefined);
-                      if (fileInputRef.current) {
-                        fileInputRef.current.value = "";
-                      }
+                      deletePvFile(downloadUrlPv.url);
                     }}
-                    className="text-sm text-red-600 hover:text-red-800"
+                    className="text-sm text-red-600 hover:text-red-800 disabled:text-red-400 disabled:cursor-not-allowed disabled:hover:text-red-400"
+                    disabled={isDeletePv}
                   >
-                    Supprimer
+                    {isDeletePv ? <LoaderCircleIcon /> : "Supprimer"}
                   </button>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
                   <div className="flex text-sm text-gray-600">
-                    <label
+                    {/*  <label
                       htmlFor="pvControleTechnique"
                       className="relative cursor-pointer rounded-md bg-slate-200 p-2 font-medium text-blue-600 hover:text-blue-500"
                     >
-                      <span>Télécharger un fichier</span>
-                      <input
-                        id="pvControleTechnique"
-                        type="file"
-                        /* accept="image/jpeg, image/png, image/webp" */
-                        className="sr-only"
-                        ref={fileInputRef}
-                        onChange={(e) => {
-                          if (e.target.files?.[0]) {
-                            setValue("pvControleTechnique", e.target.files[0]);
-                          }
-                        }}
-                      />
-                    </label>
+                      <span>Télécharger un fichier</span> */}
+                    <input
+                      id="pvControleTechnique"
+                      type="file"
+                      /* accept="image/jpeg, image/png, image/webp" */
+                      className="sr-only"
+                      ref={fileInputRefPv}
+                      onChange={(e) => {
+                        handleFilePv(e);
+                      }}
+                    />
+                    {/*  </label> */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        fileInputRefPv.current?.click();
+                      }}
+                      className="mt-1 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-slate-200  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer disabled:cursor-not-allowed"
+                      disabled={isUploadingPv}
+                    >
+                      {isUploadingPv
+                        ? "En cours..."
+                        : "Télécharger des fichiers"}
+                    </button>
+                    {uploadProgressPv > 0 && uploadProgressPv < 100 && (
+                      <div className="progress-bar">
+                        <div style={{ width: `${uploadProgressPv}%` }}>
+                          {uploadProgressPv}%
+                        </div>
+                      </div>
+                    )}
+
+                    {downloadUrlPv && (
+                      <div className="success-message">
+                        <p>File uploaded successfully!</p>
+                        <a
+                          href={downloadUrlPv.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View/Download File
+                        </a>
+                      </div>
+                    )}
                   </div>
                   <p className="text-xs text-gray-500">jusqu'à 10MB</p>
                 </div>
@@ -896,41 +1303,30 @@ export default function AddAutoPage() {
               className="sr-only"
               ref={images_autoInputRef}
               onChange={(e) => {
-                if (e.target.files) {
-                  const files = Array.from(e.target.files);
-                  setValue("imagesAuto", files);
-                }
+                handleUpload(e);
               }}
             />
             <button
               type="button"
-              onClick={() => images_autoInputRef.current?.click()}
+              onClick={() => {
+                images_autoInputRef.current?.click();
+                //handleUpload();
+              }}
               className="mt-1 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-slate-200  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
             >
-              Télécharger des fichiers
+              {isUploading ? "En cours..." : "Télécharger des fichiers"}
             </button>
 
             {/* Aperçu des images sélectionnées */}
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {images_auto.map((file, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Aperçu ${index + 1}`}
-                    className="h-24 w-full object-cover rounded"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newFiles = [...images_auto];
-                      newFiles.splice(index, 1);
-                      setValue("imagesAuto", newFiles);
-                    }}
-                    className="absolute w-[20px] h-[20px] top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100"
-                  >
-                    ×
-                  </button>
-                </div>
+            <div className="mt-2 flex flex-row flex-wrap sm:grid sm:grid-cols-4 gap-2">
+              {uploadProgressMultiple.map((item, index) => (
+                <DeleteImageMultiple
+                  item={item}
+                  index={index}
+                  images_auto={images_auto}
+                  setUploadProgressMultiple={setUploadProgressMultiple}
+                  setValue={setValue}
+                />
               ))}
             </div>
             {errors.imagesAuto && (
