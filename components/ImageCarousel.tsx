@@ -40,7 +40,7 @@ export function ImageCaroussel({
       try {
         setLoading(true);
         const imagesUrl = await axios.get(imagesAuto);
-
+        console.log({ zizi: imagesUrl.data._embedded.imageAutos });
         setImages(imagesUrl.data._embedded.imageAutos);
         setLoading(false);
       } catch (error) {
@@ -60,16 +60,13 @@ export function ImageCaroussel({
         {images &&
           images.map((value, index) => (
             <CarouselItem key={index}>
-              {/*  <img
-                src={"/" + value.url}
-                alt=""
-                className="w-full object-cover rounded-t-lg"
-              /> */}
-              <ImageWithSkeleton
-                src={"/" + value.url.split("--")[0]}
-                alt=""
-                className=" w-full rounded-t-lg"
-              />
+              {value.url && (
+                <ImageWithSkeleton
+                  src={value.url.split("--")[0]}
+                  alt=""
+                  className=" w-full rounded-t-lg"
+                />
+              )}
             </CarouselItem>
           ))}
       </CarouselContent>
@@ -98,7 +95,7 @@ export function ImageCaroussel2({
     const getImagesAuto = async () => {
       try {
         const imagesUrl = await axios.get(imagesAuto);
-
+        console.log({ zizi: imagesUrl.data._embedded.imageAutos });
         setImages(imagesUrl.data._embedded.imageAutos);
       } catch (error) {
         console.log(error);
@@ -113,11 +110,13 @@ export function ImageCaroussel2({
         {images &&
           images.map((value, index) => (
             <CarouselItem key={index}>
-              <Image
-                src={"/" + value.url.split("--")[0]}
-                alt=""
-                className="w-full object-cover rounded-t-lg"
-              />
+              {value.url && (
+                <Image
+                  src={value.url.split("--")[0]}
+                  alt=""
+                  className="w-full object-cover rounded-t-lg"
+                />
+              )}
             </CarouselItem>
           ))}
       </CarouselContent>

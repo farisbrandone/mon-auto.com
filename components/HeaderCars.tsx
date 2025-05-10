@@ -24,6 +24,8 @@ function HeaderCars() {
       <Image
         src="/logo.png"
         alt=""
+        width={100}
+        height={100}
         className="w-[100px] h-[100px] object-cover cursor-pointer "
       />
       <div className="w-[35px] h-[35px] lg:w-[180px] flex items-center justify-center cursor-pointer ">
