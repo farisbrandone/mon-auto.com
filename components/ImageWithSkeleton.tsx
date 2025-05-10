@@ -93,7 +93,7 @@ const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
             borderRadius: "4px",
           }}
         >
-          {src}
+          error
         </div>
       )}
 
