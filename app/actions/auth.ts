@@ -3,6 +3,7 @@
 import axios from "axios";
 import { LoginFormData, LoginSchema } from "@/lib/validations/seller";
 import qs from "qs";
+import { baseUrl } from "@/lib/utils";
 //import { redirect } from "next/navigation";
 
 export async function signIn(formData: LoginFormData) {
@@ -25,7 +26,7 @@ export async function signIn(formData: LoginFormData) {
       password: password,
     });
     console.log({ data });
-    const result = await axios.post("http://localhost:8090/login", data, {
+    const result = await axios.post(`${baseUrl}/login`, data, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -71,7 +72,7 @@ export async function registerUser(formData: FormData) {
 
   try {
     const response2 = await axios.post(
-      "http://localhost:8090/signup",
+      `${baseUrl}/signup`,
       {
         ...rawData,
         /* identificationDocumentFile: rawData.identificationDocumentFile.name, */
@@ -122,7 +123,7 @@ export async function updateUser(formData: FormData, id: string) {
 
   try {
     const response2 = await axios.put(
-      `http://localhost:8090/updateUser/${id}`,
+      `${baseUrl}/updateUser/${id}`,
       {
         ...rawData,
       },
@@ -148,17 +149,14 @@ export async function updateUser(formData: FormData, id: string) {
         if (error.response.status === 401) {
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
 
             const response2 = await axios.put(
-              `http://localhost:8090/updateUser/${id}`,
+              `${baseUrl}/updateUser/${id}`,
               rawData,
               {
                 headers: {
@@ -204,12 +202,9 @@ export async function updateUser(formData: FormData, id: string) {
 
 export async function forgotPassword(email: string) {
   try {
-    const response2 = await axios.post(
-      "http://localhost:8090/forgot-password",
-      {
-        email,
-      }
-    );
+    const response2 = await axios.post(`${baseUrl}/forgot-password`, {
+      email,
+    });
     console.log(response2.status);
     return { success: "Reset email sent!" };
   } catch (error) {
@@ -239,7 +234,7 @@ export async function verifyResetToken(token: string) {
 
 export async function resetPassword(data: { password: string; token: string }) {
   try {
-    const response2 = await axios.post("http://localhost:8090/reset-password", {
+    const response2 = await axios.post(`${baseUrl}/reset-password`, {
       newPassword: data.password,
       token: data.token,
     });

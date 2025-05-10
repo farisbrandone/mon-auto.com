@@ -1,10 +1,11 @@
 "use server";
 
+import { baseUrl } from "@/lib/utils";
 import axios from "axios";
 
 export async function requestToGetAllAuto() {
   try {
-    const response = await axios.get(`http://localhost:8090/autos`);
+    const response = await axios.get(`${baseUrl}/autos`);
     console.log({ status: response.status, data: response.data });
     if (response.status === 200) {
       console.log(response.data);

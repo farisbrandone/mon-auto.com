@@ -28,7 +28,7 @@ import React, {
   useState,
 } from "react";
 
-import { formatDate, formatMoney } from "@/lib/utils";
+import { baseFrontUrl, baseUrl, formatDate, formatMoney } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { getsearchAutoData } from "@/app/actions/actions";
@@ -168,7 +168,7 @@ function SearchComponent1() {
         if (newCriteria.villeDuBien)
           params.set("villeDuBien", newCriteria.villeDuBien);
         // Add other parameters as needed
-        const url = `http://localhost:8090/newsearch?${params.toString()}&page=${currentPage}&size=4`;
+        const url = `${baseUrl}/newsearch?${params.toString()}&page=${currentPage}&size=4`;
         console.log(url);
         const data = await getsearchAutoData(url);
         const newCars = data.content;
@@ -233,9 +233,7 @@ function SearchComponent1() {
       params.set("villeDuBien", newCriteria.villeDuBien);
     // Add other parameters as needed
 
-    window.location.replace(
-      `http://localhost:3000/search?${params.toString()}`
-    );
+    window.location.replace(`${baseFrontUrl}/search?${params.toString()}`);
   };
 
   const handleCouleur = (value: string) => {

@@ -1,6 +1,7 @@
 // app/actions.ts
 "use server";
 
+import { baseUrl } from "@/lib/utils";
 import axios from "axios";
 import { redirect } from "next/navigation";
 
@@ -80,16 +81,12 @@ export async function registerSeller(formData: FormData) {
   } */
 
   try {
-    const response = await axios.post(
-      `http://localhost:8090/addAuto`,
-      rawData,
-      {
-        headers: {
-          Authorization: `Bearer ${rawData.userToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post(`${baseUrl}/addAuto`, rawData, {
+      headers: {
+        Authorization: `Bearer ${rawData.userToken}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     if (response.status === 200) {
       return { success: true, data: response.data, error: null, token: null };
@@ -115,30 +112,23 @@ export async function registerSeller(formData: FormData) {
           console.log("dd, dd");
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${refreshToken}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            });
             console.log(response.data);
             /*  const val = JSON.stringify(response.data);
             localStorage.setItem("mon-auto-token", val); */
             console.log("toto");
             console.log({ token: response.data["access-token"] });
             rawData.userToken = response.data["access-token"];
-            const response2 = await axios.post(
-              `http://localhost:8090/addAuto`,
-              rawData,
-              {
-                headers: {
-                  Authorization: `Bearer ${response.data["access-token"]}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
+            const response2 = await axios.post(`${baseUrl}/addAuto`, rawData, {
+              headers: {
+                Authorization: `Bearer ${response.data["access-token"]}`,
+                "Content-Type": "application/json",
+              },
+            });
 
             if (response2.status === 200) {
               console.log("Oups on a reussie");
@@ -263,16 +253,12 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
   console.log(rawData);
 
   try {
-    const response = await axios.put(
-      `http://localhost:8090/updateAuto`,
-      rawData,
-      {
-        headers: {
-          Authorization: `Bearer ${formData.get("mon-auto-token")}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.put(`${baseUrl}/updateAuto`, rawData, {
+      headers: {
+        Authorization: `Bearer ${formData.get("mon-auto-token")}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     if (response.status === 200) {
       return { success: true, data: response.data, error: null, token: null };
@@ -289,19 +275,16 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
         if (error.response.status === 401) {
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${refreshToken}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            });
 
             rawData.userToken = response.data["access-token"];
 
             const response2 = await axios.put(
-              `http://localhost:8090/updateAuto`,
+              `${baseUrl}/updateAuto`,
               rawData,
               {
                 headers: {
@@ -366,10 +349,7 @@ export async function sendContact(formData: FormData) {
   };
 
   try {
-    const response = await axios.post(
-      `http://localhost:8090/sendContact`,
-      data
-    );
+    const response = await axios.post(`${baseUrl}/sendContact`, data);
 
     console.log({ contactStatus: response.status });
 
@@ -388,7 +368,7 @@ export const getDataAsync = async (token: any) => {
   const senToken = JSON.parse(token);
 
   try {
-    const response = await axios.get(`http://localhost:8090/sellers`, {
+    const response = await axios.get(`${baseUrl}/sellers`, {
       headers: {
         Authorization: `Bearer ${senToken["access-token"]}`,
         "Content-Type": "application/json",
@@ -423,16 +403,13 @@ export const getDataAsync = async (token: any) => {
           console.log("dd, dd");
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${senToken["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${senToken["refresh-token"]}`,
+              },
+            });
 
-            const response2 = await axios.get(`http://localhost:8090/sellers`, {
+            const response2 = await axios.get(`${baseUrl}/sellers`, {
               headers: {
                 Authorization: `Bearer ${response.data["access-token"]}`,
                 "Content-Type": "application/json",
@@ -481,15 +458,12 @@ export const getUserDataAsync = async (token: any, userId: string) => {
   const senToken = JSON.parse(token);
 
   try {
-    const response = await axios.get(
-      `http://localhost:8090/sellers/${userId}/autos`,
-      {
-        headers: {
-          Authorization: `Bearer ${senToken["access-token"]}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.get(`${baseUrl}/sellers/${userId}/autos`, {
+      headers: {
+        Authorization: `Bearer ${senToken["access-token"]}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = response.data;
 
@@ -519,14 +493,11 @@ export const getUserDataAsync = async (token: any, userId: string) => {
         if (error.response.status === 401) {
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${senToken["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${senToken["refresh-token"]}`,
+              },
+            });
 
             /*  const val = JSON.stringify(response.data);
                 localStorage.setItem("mon-auto-token", val); */
@@ -534,7 +505,7 @@ export const getUserDataAsync = async (token: any, userId: string) => {
             console.log({ token: response.data["access-token"] });
 
             const response2 = await axios.get(
-              `http://localhost:8090/sellers/${userId}/autos`,
+              `${baseUrl}/sellers/${userId}/autos`,
               {
                 headers: {
                   Authorization: `Bearer ${response.data["access-token"]}`,
@@ -583,9 +554,7 @@ export const getUserDataAsync = async (token: any, userId: string) => {
 
 export const getAutoDataAsync = async (page: number) => {
   try {
-    const response = await axios.get(
-      `http://localhost:8090/autos?page=${page}&size=20`
-    );
+    const response = await axios.get(`${baseUrl}/autos?page=${page}&size=20`);
 
     const data = response.data;
 
@@ -612,7 +581,7 @@ export const getAutoDataAsync = async (page: number) => {
 
 export const getSingleAutoDataAsync = async (autoId: string) => {
   try {
-    const response = await axios.get(`http://localhost:8090/autos/${autoId}`);
+    const response = await axios.get(`${baseUrl}/autos/${autoId}`);
 
     const data = response.data;
 
@@ -633,9 +602,7 @@ export const getSingleAutoDataAsync = async (autoId: string) => {
 
 export const getImageAuto = async (autoId: string) => {
   try {
-    const response = await axios.get(
-      `http://localhost:8090/autos/${autoId}/imagesAuto`
-    );
+    const response = await axios.get(`${baseUrl}/autos/${autoId}/imagesAuto`);
 
     const data = response.data._embedded.imageAutos.map((val: any) => {
       const myId = val._links.self.href as string;
@@ -662,20 +629,17 @@ export const getImageAuto = async (autoId: string) => {
 };
 
 /* 
-"http://localhost:8090/autos/2/imagesAuto"
+"${baseUrl}/autos/2/imagesAuto"
 */
 
 export const deleteSellerUser = async (id: string, token: any) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:8090/deleteUser/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token["access-token"]}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.delete(`${baseUrl}/deleteUser/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token["access-token"]}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return {
       success: true,
@@ -692,16 +656,13 @@ export const deleteSellerUser = async (id: string, token: any) => {
         // Handle specific status codes
         if (error.response.status === 401) {
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
             const response2 = await axios.delete(
-              `http://localhost:8090/deleteUser/${id}`,
+              `${baseUrl}/deleteUser/${id}`,
 
               {
                 headers: {
@@ -740,15 +701,12 @@ export const deleteSellerUser = async (id: string, token: any) => {
 export const deleteImage = async (id: string, token: any) => {
   console.log(token["access-token"]);
   try {
-    const response = await axios.delete(
-      `http://localhost:8090/deleteImageAuto/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token["access-token"]}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.delete(`${baseUrl}/deleteImageAuto/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token["access-token"]}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return {
       success: true,
@@ -766,17 +724,14 @@ export const deleteImage = async (id: string, token: any) => {
         if (error.response.status === 401) {
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
 
             const response2 = await axios.delete(
-              `http://localhost:8090/deleteImagAuto/${id}`,
+              `${baseUrl}/deleteImagAuto/${id}`,
 
               {
                 headers: {
@@ -815,15 +770,12 @@ export const deleteImage = async (id: string, token: any) => {
 
 export const deleteSellerAuto = async (id: string, token: any) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:8090/deleteAuto/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token["access-token"]}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.delete(`${baseUrl}/deleteAuto/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token["access-token"]}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return {
       success: true,
@@ -840,16 +792,13 @@ export const deleteSellerAuto = async (id: string, token: any) => {
         // Handle specific status codes
         if (error.response.status === 401) {
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
             const response2 = await axios.delete(
-              `http://localhost:8090/deleteAuto/${id}`,
+              `${baseUrl}/deleteAuto/${id}`,
 
               {
                 headers: {
@@ -887,15 +836,12 @@ export const deleteSellerAuto = async (id: string, token: any) => {
 
 export const getSingleUserDataAsync = async (autoId: string, token: any) => {
   try {
-    const response = await axios.get(
-      `http://localhost:8090/sellers/${autoId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token["access-token"]}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.get(`${baseUrl}/sellers/${autoId}`, {
+      headers: {
+        Authorization: `Bearer ${token["access-token"]}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = response.data;
 
@@ -917,16 +863,13 @@ export const getSingleUserDataAsync = async (autoId: string, token: any) => {
         // Handle specific status codes
         if (error.response.status === 401) {
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
             const response2 = await axios.delete(
-              `http://localhost:8090/seller/${autoId}`,
+              `${baseUrl}/seller/${autoId}`,
 
               {
                 headers: {
@@ -964,9 +907,7 @@ export const getSingleUserDataAsync = async (autoId: string, token: any) => {
 
 export const confirmAction = async (token: string) => {
   try {
-    const response = await axios.get(
-      `http://localhost:8090/confirm?token=${token}`
-    );
+    const response = await axios.get(`${baseUrl}/confirm?token=${token}`);
     console.log({ status: response.status, data: response.data });
     return { status: response.status };
   } catch (error) {
@@ -976,7 +917,7 @@ export const confirmAction = async (token: string) => {
 
 export const refreshToken = async (token: any) => {
   try {
-    const response = await axios.get(`http://localhost:8090/refreshToken`, {
+    const response = await axios.get(`${baseUrl}/refreshToken`, {
       headers: {
         Authorization: `Bearer ${token["refresh-token"]}`,
       },
@@ -990,7 +931,7 @@ export const refreshToken = async (token: any) => {
 export const deleteFile = async (token: any, fileName: string) => {
   try {
     const response = await axios.delete(
-      `http://localhost:8090/deleteFile?fileName=${fileName}`,
+      `${baseUrl}/deleteFile?fileName=${fileName}`,
       {
         headers: {
           Authorization: `Bearer ${token["access-token"]}`,
@@ -1008,17 +949,14 @@ export const deleteFile = async (token: any, fileName: string) => {
         if (error.response.status === 401) {
           console.error("Erreur lors de l'inscription:");
           try {
-            const response = await axios.get(
-              `http://localhost:8090/refreshToken`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token["refresh-token"]}`,
-                },
-              }
-            );
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
             console.log(response.data["access-token"]);
             const response2 = await axios.delete(
-              `http://localhost:8090/deleteFile?fileName=${fileName}`,
+              `${baseUrl}/deleteFile?fileName=${fileName}`,
 
               {
                 headers: {

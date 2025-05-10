@@ -133,7 +133,7 @@ function CarsPage() {
       params.set("villeDuBien", newCriteria.villeDuBien);
 
     console.log(params.toString());
-    router.push(`http://localhost:3000/search?${params.toString()}`);
+    router.push(`/search?${params.toString()}`);
   }, []);
 
   const handleCouleur = (value: string) => {

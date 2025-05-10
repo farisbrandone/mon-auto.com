@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { baseUrl } from "@/lib/utils";
 
 export async function POST(req: Request) {
   console.log("ddddddddddddddddddddddddddddddddddddddddddd");
@@ -12,7 +13,7 @@ export async function POST(req: Request) {
   // Forward the upload to your actual backend
   const formData = await req.formData();
 
-  const response = await fetch("http://localhost:8090/upload-multiple", {
+  const response = await fetch(`${baseUrl}/upload-multiple`, {
     method: "POST",
     body: formData,
     headers: {

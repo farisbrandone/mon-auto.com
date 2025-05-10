@@ -6,6 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const baseUrl = "https://monauobackendtrue.onrender.com";
+
+export const baseFrontUrl = "https://mon-auto-com.onrender.com";
+
 export function formatMoney(
   amount: number,
   decimalCount = 0,
@@ -61,27 +65,20 @@ export const processCatchRequest = async (
       if (error.response.status === 401) {
         // Handle unauthorized (e.g., refresh token or redirect to login)
         try {
-          const response = await axios.get(
-            `http://localhost:8090/refreshToken`,
-            {
-              headers: {
-                Authorization: `Bearer ${refreshToken}`,
-              },
-            }
-          );
+          const response = await axios.get(`${baseUrl}/refreshToken`, {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          });
 
           rawData.userToken = response.data["access-token"];
 
-          const response2 = await axios.put(
-            `http://localhost:8090/updateAuto`,
-            rawData,
-            {
-              headers: {
-                Authorization: `Bearer ${response.data["access-token"]}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          const response2 = await axios.put(`${baseUrl}/updateAuto`, rawData, {
+            headers: {
+              Authorization: `Bearer ${response.data["access-token"]}`,
+              "Content-Type": "application/json",
+            },
+          });
 
           if (response2.status === 200) {
             return {

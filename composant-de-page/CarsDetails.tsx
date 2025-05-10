@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDate, formatMoney } from "@/lib/utils";
+import { baseUrl, formatDate, formatMoney } from "@/lib/utils";
 import { contactForm, contactSchema } from "@/lib/validations/seller";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -78,7 +78,7 @@ function CarsDetails() {
     const getAllAutos = async () => {
       try {
         setLoading(true);
-        const data = await axios.get(`http://localhost:8090/autos/${slug}`);
+        const data = await axios.get(`${baseUrl}/autos/${slug}`);
         setAuto(data.data);
 
         setLoading(false);

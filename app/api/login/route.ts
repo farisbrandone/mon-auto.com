@@ -1,5 +1,6 @@
 "use server";
 
+import { baseFrontUrl } from "@/lib/utils";
 // app/api/validate/route.ts
 import { NextResponse } from "next/server";
 
@@ -39,5 +40,5 @@ export async function POST(req: Request) {
     );
   } */
 
-  return NextResponse.redirect(`http://localhost:3000`);
+  return NextResponse.redirect(`${baseFrontUrl}`);
 }

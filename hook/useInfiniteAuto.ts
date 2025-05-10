@@ -1,4 +1,5 @@
 // hooks/useInfiniteAutos.ts
+import { baseUrl } from "@/lib/utils";
 import { useState, useEffect, useCallback } from "react";
 
 export const useInfiniteAutos = () => {
@@ -12,9 +13,7 @@ export const useInfiniteAutos = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:8090/autos?page=${page}&size=10`
-      );
+      const response = await fetch(`${baseUrl}/autos?page=${page}&size=10`);
       const data = await response.json();
       const newAutos = data._embedded.autos;
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { baseUrl } from "@/lib/utils";
 
 export async function POST(req: Request) {
   const authHeader = (await headers()).get("authorization");
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
   // Forward the upload to your actual backend
   const formData = await req.formData();
 
-  const response = await fetch("http://localhost:8090/uploadFile", {
+  const response = await fetch(`${baseUrl}/uploadFile`, {
     method: "POST",
     body: formData,
     headers: {
