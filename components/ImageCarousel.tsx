@@ -66,7 +66,7 @@ export function ImageCaroussel({
                 className="w-full object-cover rounded-t-lg"
               /> */}
               <ImageWithSkeleton
-                src={"/" + value.url}
+                src={"/" + value.url.split("--")[0]}
                 alt=""
                 className=" w-full rounded-t-lg"
               />
@@ -114,7 +114,7 @@ export function ImageCaroussel2({
           images.map((value, index) => (
             <CarouselItem key={index}>
               <Image
-                src={"/" + value.url}
+                src={"/" + value.url.split("--")[0]}
                 alt=""
                 className="w-full object-cover rounded-t-lg"
               />
