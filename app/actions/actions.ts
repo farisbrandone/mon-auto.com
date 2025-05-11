@@ -993,3 +993,130 @@ export const deleteFile = async (token: any, fileName: string) => {
     throw new Error(myError);
   }
 };
+
+export const uploadFile = async (token: any, formData: FormData) => {
+  try {
+    const response = await axios.post(`${baseUrl}/uploadFile`, formData, {
+      headers: {
+        Authorization: `Bearer ${token["access-token"]}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return { success: true, error: null, data: response.data, token: null };
+  } catch (error) {
+    let myError = "";
+
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          console.error("Erreur lors de l'inscription:");
+          try {
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
+            console.log(response.data["access-token"]);
+            const response2 = await axios.post(
+              `${baseUrl}/uploadFile`,
+              formData,
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log("toutou");
+            if (response2.status === 200) {
+              console.log("nounou");
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+          }
+        }
+      } else if (error.request) {
+        myError = error.message;
+      } else {
+        myError = error.message;
+      }
+    } else {
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
+  }
+};
+
+export const uploadMultipleFile = async (token: any, formData: FormData) => {
+  try {
+    const response = await axios.post(`${baseUrl}/upload-multiple`, formData, {
+      headers: {
+        Authorization: `Bearer ${token["access-token"]}`,
+      },
+    });
+    return { success: true, error: null, data: response.data, token: null };
+  } catch (error) {
+    let myError = "";
+
+    if (axios.isAxiosError(error)) {
+      // Axios error (network or HTTP)
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          console.error("Erreur lors de l'inscription:");
+          try {
+            const response = await axios.get(`${baseUrl}/refreshToken`, {
+              headers: {
+                Authorization: `Bearer ${token["refresh-token"]}`,
+              },
+            });
+            console.log(response.data["access-token"]);
+            const response2 = await axios.post(
+              `${baseUrl}/upload-multiple`,
+              formData,
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data["access-token"]}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log("toutou");
+            if (response2.status === 200) {
+              console.log("nounou");
+              return {
+                success: true,
+                data: response2.data,
+                error: null,
+                token: response.data,
+              };
+            } else {
+              throw new Error("");
+            }
+          } catch (error) {
+            console.log(error);
+            throw new Error("");
+          }
+        }
+      } else if (error.request) {
+        myError = error.message;
+      } else {
+        myError = error.message;
+      }
+    } else {
+      myError = "Une erreur est survenue vérifié votre connexion";
+    }
+    throw new Error(myError);
+  }
+};

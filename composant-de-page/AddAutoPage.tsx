@@ -18,6 +18,8 @@ import {
   deleteFile,
   refreshToken,
   registerSeller,
+  uploadFile,
+  uploadMultipleFile,
 } from "@/app/actions/actions"; // À implémenter
 import Image from "next/image";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -132,31 +134,8 @@ export default function AddAutoPage() {
       const token = JSON.parse(
         localStorage.getItem("mon-auto-token") as string
       );
-      const tokenRefresh = await refreshToken(token);
-      if (tokenRefresh) {
-        console.log("lolo");
-        const val = JSON.stringify(tokenRefresh);
-        localStorage.setItem("mon-auto-token", val);
-      }
 
-      const responsePv = await axios.post(
-        "/api/upload-file",
-        pvControlFormData,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenRefresh["access-token"]}`,
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const progress = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              setUploadProgressPv(progress);
-            }
-          },
-        }
-      );
+      const responsePv = await uploadFile(token, pvControlFormData);
 
       const keys = Object.keys(responsePv.data);
       const values = Object.values(responsePv.data) as string[];
@@ -200,31 +179,8 @@ export default function AddAutoPage() {
       const token = JSON.parse(
         localStorage.getItem("mon-auto-token") as string
       );
-      const tokenRefresh = await refreshToken(token);
-      if (tokenRefresh) {
-        console.log("lolo");
-        const val = JSON.stringify(tokenRefresh);
-        localStorage.setItem("mon-auto-token", val);
-      }
 
-      const response = await axios.post(
-        "/api/upload-file",
-        carteGriseFormData,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenRefresh["access-token"]}`,
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const progress = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              setUploadProgress(progress);
-            }
-          },
-        }
-      );
+      const response = await uploadFile(token, carteGriseFormData);
 
       const keys = Object.keys(response.data);
       const values = Object.values(response.data) as string[];
@@ -406,7 +362,7 @@ export default function AddAutoPage() {
       progress: 0,
     }));
     setUploadProgressMultiple((prev) => [...prev, ...myProgress]);
-
+    let arrarResponse: any = [];
     try {
       // Upload files sequentially (for better progress tracking)
       for (let i = 0; i < files.length; i++) {
@@ -420,55 +376,24 @@ export default function AddAutoPage() {
           localStorage.getItem("mon-auto-token") as string
         );
 
-        const tokenRefresh = await refreshToken(token);
-        if (tokenRefresh) {
-          console.log("lolo");
-          const val = JSON.stringify(tokenRefresh);
-          localStorage.setItem("mon-auto-token", val);
-        }
+        const response = uploadMultipleFile(token, formData);
 
-        await axios
-          .post("/api/multiple-upload-file", formData, {
-            headers: {
-              Authorization: `Bearer ${tokenRefresh["access-token"]}`,
-              "Content-Type": "multipart/form-data",
-            },
-            onUploadProgress: (progressEvent) => {
-              if (progressEvent.total) {
-                const progress = Math.round(
-                  (progressEvent.loaded * 100) / progressEvent.total
-                );
-                setUploadProgressMultiple((prev) =>
-                  prev.map((item) =>
-                    item.fileName === file.name ? { ...item, progress } : item
-                  )
-                );
-              }
-            },
-          })
-          .then((response) => {
-            const keys = Object.keys(response.data);
-            const values = Object.values(response.data) as string[];
-            setUploadProgressMultiple((prev) =>
-              prev.map((item) =>
-                item.fileName === file.name
-                  ? { ...item, downloadUrl: values[0], originalName: keys[0] }
-                  : item
-              )
-            );
-          })
-          .catch((error) => {
-            setUploadProgressMultiple((prev) =>
-              prev.map((item) =>
-                item.fileName === file.name
-                  ? { ...item, error: "Upload failed" }
-                  : item
-              )
-            );
-            console.error(`Error uploading ${file.name}:`, error);
-            throw error;
-          });
+        arrarResponse.push(response);
       }
+      const result = await Promise.all([...arrarResponse]);
+      result.forEach((val) => {
+        const keys = Object.keys(val.data);
+
+        const values = Object.values(val.data) as string[];
+        setUploadProgressMultiple((prev) =>
+          prev.map((item) => {
+            console.log({ name: item.fileName, keyss: keys[0] });
+            return item.fileName === keys[0]
+              ? { ...item, downloadUrl: values[0], originalName: keys[0] }
+              : item;
+          })
+        );
+      });
       toast.success("Le téléchargement s'est effectué avec success");
     } catch (err) {
       console.error("Upload error:", err);
