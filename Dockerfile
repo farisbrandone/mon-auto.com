@@ -1,5 +1,5 @@
 # Étape de construction
-FROM node:18-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Étape de production
-FROM node:18-alpine AS runner
+FROM node:24-alpine AS runner
 
 WORKDIR /app
 
@@ -31,7 +31,7 @@ COPY --from=builder /app/public ./public
 EXPOSE 3000
 
 # Variable d'environnement
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Commande de démarrage
 CMD ["node", "server.js"]
