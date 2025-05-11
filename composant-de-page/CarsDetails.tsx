@@ -218,7 +218,7 @@ function CarsDetails() {
   }
 
   return (
-    <div className=" text-black text-[14px] sm:text-[16px] min-h-screen flex flex-col  ">
+    <div className="relative text-black text-[14px] sm:text-[16px] min-h-screen flex flex-col  ">
       <HeaderCars />
       <ScrollToTopButton />
       <Link
