@@ -3,10 +3,9 @@ import { headers } from "next/headers";
 import { baseUrl } from "@/lib/utils";
 
 export async function POST(req: Request) {
-  console.log("ddddddddddddddddddddddddddddddddddddddddddd");
   const authHeader = (await headers()).get("authorization");
   const token = authHeader?.split(" ")[1];
-  console.log({ token });
+
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -18,9 +17,9 @@ export async function POST(req: Request) {
     body: formData,
     headers: {
       Authorization: `Bearer ${token}`,
-      /*  "Content-Type": "multipart/form-data", */
+      "Content-Type": "multipart/form-data",
     },
   });
-
+  console.log(response.status);
   return response;
 }

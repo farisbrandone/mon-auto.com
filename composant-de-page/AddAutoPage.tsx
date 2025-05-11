@@ -466,6 +466,7 @@ export default function AddAutoPage() {
               )
             );
             console.error(`Error uploading ${file.name}:`, error);
+            throw error;
           });
       }
       toast.success("Le téléchargement s'est effectué avec success");

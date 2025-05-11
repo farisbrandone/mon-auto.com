@@ -17,9 +17,11 @@ export async function POST(req: Request) {
     body: formData,
     headers: {
       Authorization: `Bearer ${token}`,
-      /* "Content-Type": "multipart/form-data", */
+      "Content-Type": "multipart/form-data",
     },
   });
+
+  console.log(response.status);
 
   return response;
 }
