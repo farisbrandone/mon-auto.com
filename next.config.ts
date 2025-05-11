@@ -15,8 +15,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  //output: "standalone", // Important pour Docker
-  //reactStrictMode: true,
+  output: "standalone", // Important pour Docker
+  reactStrictMode: true,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
