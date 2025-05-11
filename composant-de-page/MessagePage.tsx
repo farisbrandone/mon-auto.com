@@ -61,15 +61,15 @@ export default function MessagePage() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="max-w-[500px] mx-auto p-4 loginShaddow max-sm:mt-40"
+        className="max-w-[500px] mx-auto p-4 loginShaddow max-sm:mt-40 mb-2"
       >
         <div className="w-full ">
-          <p className="w-full text-center text-[18px] font-[600] text-[#333333] mb-4 mt-2 ">
+          <p className="w-full text-center text-[18px] font-[600] text-[#333333] mb-2 sm:mb-3 mt-2 ">
             {" "}
             Contactez nous
           </p>
           <form
-            className="flex flex-col gap-2 w-full p-3 rounded-md"
+            className="flex flex-col gap-2 w-full p-2 rounded-md"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className=" flex flex-col sm:grid sm:grid-cols-2 w-full gap-2">
@@ -148,7 +148,7 @@ export default function MessagePage() {
 
             <Button
               type="submit"
-              className="w-[250px] mx-auto text-[18px] mb-2 p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
+              className="w-[250px] mx-auto text-[18px]  my-2 p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
               onClick={handleSubmit(onSubmit)}
               disabled={disableAfterSend}
             >
