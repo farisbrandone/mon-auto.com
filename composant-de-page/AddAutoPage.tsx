@@ -473,7 +473,7 @@ export default function AddAutoPage() {
 
   useEffect(() => {
     if (!localStorage.getItem("mon-auto-token")) {
-      router.push("/seller-signup");
+      window.location.replace("/seller-signup");
     }
   }, []);
 

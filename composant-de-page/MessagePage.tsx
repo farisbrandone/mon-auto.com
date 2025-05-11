@@ -63,7 +63,7 @@ export default function MessagePage() {
         transition={{ duration: 0.8 }}
         className="max-w-[500px] mx-auto p-4 loginShaddow max-sm:mt-40"
       >
-        <div className="w-full mt-4 border-[1px] border-solid border-[#33333359] shadow-2xl rounded-md max-w-7xl mx-auto ">
+        <div className="w-full ">
           <p className="w-full text-center text-[18px] font-[600] text-[#333333] mb-4 mt-2 ">
             {" "}
             Contactez nous
@@ -148,7 +148,7 @@ export default function MessagePage() {
 
             <Button
               type="submit"
-              className="w-[250px] mx-auto text-[18px] p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
+              className="w-[250px] mx-auto text-[18px] mb-2 p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
               onClick={handleSubmit(onSubmit)}
               disabled={disableAfterSend}
             >

@@ -218,18 +218,18 @@ function CarsDetails() {
   }
 
   return (
-    <div className=" text-black text-[16px] min-h-screen flex flex-col  ">
+    <div className=" text-black text-[14px] sm:text-[16px] min-h-screen flex flex-col  ">
       <HeaderCars />
       <ScrollToTopButton />
       <Link
         href="/cars"
-        className="flex items-center mt-2 cursor-pointer pl-2 max-w-[200px] "
+        className="flex items-center mt-2 cursor-pointer pl-2 w-[250px] "
       >
         <div className="p-1.5 bg-[#1eb0fc] flex items-center rounded-sm ">
           <Previous />
           <Previous className="-ml-1" />
         </div>
-        <p className="ml-2">retour à l'inventaire</p>
+        <p className="ml-2 w-full flex-1 ">retour à l'inventaire</p>
       </Link>
 
       <div className="flex flex-grow flex-col mt-6 xl:flex-row xl:gap-2">
@@ -239,20 +239,20 @@ function CarsDetails() {
               <img
                 src="/vehicule1.jpg"
                 alt=""
-                className="w-[40px] h-[40px] object-cover rounded-full  "
+                className="w-[50px] h-[50px] object-cover rounded-full  "
               />
-              <div className="flex flex-col gap-2">
-                <p className="text-[20px] font-black ">
-                  {formatDate(auto?.anneeDeFabrication)} {auto.marques}{" "}
-                  {auto.model} - {formatMoney(auto.kilometrage)}{" "}
-                  {auto.kilometrageUnit}
-                </p>
-                <p>
+              {/*  <div className="flex flex-col gap-2"> */}
+              <p className="text-[20px] font-black ">
+                {formatDate(auto?.anneeDeFabrication)} {auto.marques}{" "}
+                {auto.model} - {formatMoney(auto.kilometrage)}{" "}
+                {auto.kilometrageUnit}
+              </p>
+              {/*  <p>
                   {formatDate(auto?.anneeDeFabrication)} {auto.marques}{" "}
                   {auto.model} {auto.tailleDuMoteur} {"L "}
                   Préférence : {auto.typeDeTrainConducteur}
-                </p>
-              </div>
+                </p> */}
+              {/*  </div> */}
             </div>
             <ImageCaroussel2
               className="w-full max-w-7xl rounded-lg mt-3 p-2 "
