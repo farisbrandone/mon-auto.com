@@ -34,4 +34,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Commande de démarrage
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
