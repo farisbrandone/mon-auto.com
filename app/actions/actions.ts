@@ -1025,7 +1025,7 @@ export const uploadFile = async (token: any, formData: FormData) => {
               {
                 headers: {
                   Authorization: `Bearer ${response.data["access-token"]}`,
-                  "Content-Type": "application/json",
+                  "Content-Type": "multipart/form-data",
                 },
               }
             );
@@ -1063,6 +1063,7 @@ export const uploadMultipleFile = async (token: any, formData: FormData) => {
     const response = await axios.post(`${baseUrl}/upload-multiple`, formData, {
       headers: {
         Authorization: `Bearer ${token["access-token"]}`,
+        "Content-Type": "multipart/form-data",
       },
     });
     return { success: true, error: null, data: response.data, token: null };
@@ -1088,7 +1089,7 @@ export const uploadMultipleFile = async (token: any, formData: FormData) => {
               {
                 headers: {
                   Authorization: `Bearer ${response.data["access-token"]}`,
-                  "Content-Type": "application/json",
+                  "Content-Type": "multipart/form-data",
                 },
               }
             );
