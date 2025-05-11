@@ -7,7 +7,7 @@ const FooterCond: FC = () => {
   return (
     <footer className=" py-0.5">
       <div className="px-2 text-[12px] sm:text-[14px] text-center">
-        <div className="flex flex-wrap justify-center gap-3 mb-2">
+        <div className="flex flex-wrap justify-center gap-1.5 mb-1">
           <Link
             href="/privacy-policy"
             className="text-gray-50 hover:text-gray-100  hover:underline"
