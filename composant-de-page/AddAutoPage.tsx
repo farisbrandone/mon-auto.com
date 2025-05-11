@@ -41,7 +41,6 @@ import DeleteImageMultiple from "@/components/DeleteImageMultiple";
 
 export interface UploadProgress {
   fileName: string;
-  progress: number;
   downloadUrl?: string;
   error?: string;
   originalName?: string;
@@ -359,7 +358,6 @@ export default function AddAutoPage() {
 
     const myProgress = files.map((file) => ({
       fileName: file.name,
-      progress: 0,
     }));
     setUploadProgressMultiple((prev) => [...prev, ...myProgress]);
     let arrarResponse: any = [];
@@ -368,7 +366,7 @@ export default function AddAutoPage() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const formData = new FormData();
-        formData.append("files", file); // Note 'files' instead of 'file'
+        formData.append("file", file); // Note 'files' instead of 'file'
         if (!localStorage.getItem("mon-auto-token")) {
           router.push("/seller-signup");
         }
@@ -376,7 +374,7 @@ export default function AddAutoPage() {
           localStorage.getItem("mon-auto-token") as string
         );
 
-        const response = uploadMultipleFile(token, formData);
+        const response = uploadFile(token, formData);
 
         arrarResponse.push(response);
       }
