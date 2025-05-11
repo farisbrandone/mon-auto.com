@@ -5,8 +5,8 @@ const FooterCond: FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className=" py-2">
-      <div className="container mx-auto px-2 text-[12px] sm:text-[14px] text-center">
+    <footer className=" py-1">
+      <div className="px-2 text-[12px] sm:text-[14px] text-center">
         <div className="flex flex-wrap justify-center gap-3 mb-2">
           <Link
             href="/privacy-policy"
