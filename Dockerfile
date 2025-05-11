@@ -27,6 +27,9 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
+# Ensure next is available
+RUN npm install -g next
+
 # Exposer le port
 EXPOSE 3000
 
@@ -34,4 +37,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Commande de démarrage
-CMD ["npm", "start"]
+CMD ["next", "start"]
