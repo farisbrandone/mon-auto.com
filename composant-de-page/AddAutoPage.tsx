@@ -170,9 +170,9 @@ export default function AddAutoPage() {
       if (fileInputRefPv.current) {
         fileInputRefPv.current.value = "";
       }
-      setIsUploading(false);
+      setIsUploadingPv(false);
     } catch (error) {
-      setIsUploading(false);
+      setIsUploadingPv(false);
       toast.error("Une erreur est survenue pendant la suppression");
       console.log(error);
     }
