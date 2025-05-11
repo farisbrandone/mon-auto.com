@@ -229,18 +229,18 @@ function CarsDetails() {
           <Previous />
           <Previous className="-ml-1" />
         </div>
-        <p className="ml-2 w-full flex-1 ">retour à l'inventaire</p>
+        <p className="ml-2 w-full flex-1 font-[800] ">Retour à l'inventaire</p>
       </Link>
 
       <div className="flex flex-grow flex-col mt-6 xl:flex-row xl:gap-2">
         {auto && (
           <div className="flex flex-col">
             <div className="flex items-center gap-2 px-1.5">
-              <img
+              {/*   <img
                 src="/vehicule1.jpg"
                 alt=""
                 className="w-[50px] h-[50px] object-cover rounded-full  "
-              />
+              /> */}
               {/*  <div className="flex flex-col gap-2"> */}
               <p className="text-[20px] font-black ">
                 {formatDate(auto?.anneeDeFabrication)} {auto.marques}{" "}
@@ -262,22 +262,6 @@ function CarsDetails() {
               setImages={setImages}
               images={images}
             />
-            <div className="flex items-center gap-3 max-w-5xl p-2 flex-wrap">
-              {images &&
-                images.map((val, index) => {
-                  return (
-                    <img
-                      src={"/" + val.url}
-                      alt=""
-                      key={index}
-                      className={clsx("max-w-100px h-[100px] object-cover ", {
-                        "border-[2px] border-solid border-[#1eb0fc] ":
-                          position === index,
-                      })}
-                    />
-                  );
-                })}
-            </div>
 
             <div className="mt-2 flex flex-col w-full">
               <p className="text-[18px] font-black mb-4 p-2 ">
