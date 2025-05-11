@@ -181,7 +181,7 @@ export default function AddAutoPage() {
       );
 
       const response = await uploadFile(token, carteGriseFormData);
-
+      console.log({ response });
       const keys = Object.keys(response.data);
       const values = Object.values(response.data) as string[];
 

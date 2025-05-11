@@ -1002,10 +1002,11 @@ export const uploadFile = async (token: any, formData: FormData) => {
         "Content-Type": "multipart/form-data",
       },
     });
+    console.log(response);
     return { success: true, error: null, data: response.data, token: null };
   } catch (error) {
     let myError = "";
-
+    console.log(error);
     if (axios.isAxiosError(error)) {
       // Axios error (network or HTTP)
       if (error.response) {
