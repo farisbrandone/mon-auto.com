@@ -30,11 +30,14 @@ COPY --from=builder /app/public ./public
 # Ensure next is available
 RUN npm install -g next
 
-# Exposer le port
-EXPOSE 3000
+
 
 # Variable d'environnement
 ENV NODE_ENV=production
+ENV PORT=3000
+
+# Exposer le port
+EXPOSE 3000
 
 # Commande de démarrage
 CMD ["next", "start"]
