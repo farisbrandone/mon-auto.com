@@ -31,7 +31,10 @@ export default function SellerSigup() {
   const [transitionForAdd, setTransitionForAdd] = useState(false);
   const fileInputRefDoc = useRef<HTMLInputElement>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [downloadUrl, setDownloadUrl] = useState<fileResponseType>();
+  const [downloadUrl, setDownloadUrl] = useState<fileResponseType>({
+    originalName: "",
+    url: "",
+  });
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
   const {
@@ -48,8 +51,8 @@ export default function SellerSigup() {
     },
   });
 
-  const handleFileDoc = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    //beginning get url of pv
+  /* const handleFileDoc = async (e: React.ChangeEvent<HTMLInputElement>) => {
+   
     console.log("net net");
     const mm = e.target.files;
     const docControlFormData = new FormData();
@@ -78,7 +81,7 @@ export default function SellerSigup() {
       setDownloadUrl(
         { url: values[0], originalName: keys[0] }
 
-        /* responsePv.data */
+       
       );
 
       if (fileInputRefDoc.current) {
@@ -91,16 +94,8 @@ export default function SellerSigup() {
       toast.error("Une erreur est survenue pendant le téléchargement");
     }
 
-    //end get url of pv
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setValue("identificationDocumentFile", file);
-      setFileName(file.name);
-    }
-  };
+    
+  }; */
 
   const onSubmit = async (data: RegisterFormData) => {
     const result = RegisterSchema.safeParse(data);
@@ -163,6 +158,11 @@ export default function SellerSigup() {
       console.error("Erreur lors de l'inscription:", error);
     }
   };
+
+  useEffect(() => {
+    setValue("identificationDocumentFile", null);
+    setValue("typeSellerIdentificationDoc", "CNI");
+  }, []);
 
   if (successSend) {
     return (
@@ -305,8 +305,7 @@ export default function SellerSigup() {
               )}
             </div>
           </div>
-          {/* Fichier Passeport */}
-          <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
+          {/*   <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Type de document pour identification
@@ -349,11 +348,7 @@ export default function SellerSigup() {
                   type="file"
                   ref={fileInputRefDoc}
                   onChange={handleFileDoc}
-                  /*   onChange={(e) => {
-                    if (e.target.files?.[0]) {
-                      setValue("identificationDocumentFile", e.target.files[0]);
-                    }
-                  }} */
+                 
                   className="hidden"
                 />
 
@@ -388,16 +383,6 @@ export default function SellerSigup() {
 
                 <p className=" text-gray-500 ml-1">jusqu'à 10MB</p>
 
-                {/*  <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Choisir un fichier
-                </button>
-                <span className="ml-2 text-sm text-gray-500">
-                  {fileName || "Aucun fichier sélectionné"}
-                </span> */}
               </div>
               {errors.identificationDocumentFile && (
                 <p className="mt-1 text-sm text-red-600">
@@ -405,7 +390,7 @@ export default function SellerSigup() {
                 </p>
               )}
             </div>
-          </div>
+          </div> */}
           {/* Description */}
           <div>
             <label
