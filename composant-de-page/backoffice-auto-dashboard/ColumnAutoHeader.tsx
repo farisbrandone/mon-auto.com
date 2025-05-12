@@ -1,7 +1,5 @@
 import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { RegisterFormData } from "@/lib/validations/seller";
 import Link from "next/link";
 
 export interface autoState {

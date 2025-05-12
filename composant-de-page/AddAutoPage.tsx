@@ -1234,14 +1234,12 @@ export default function AddAutoPage() {
               type="button"
               onClick={() => {
                 images_autoInputRef.current?.click();
-                //handleUpload();
               }}
               className="mt-1 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-slate-200  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
             >
               {isUploading ? "En cours..." : "Télécharger des fichiers"}
             </button>
 
-            {/* Aperçu des images sélectionnées */}
             <div className="mt-2 flex flex-row flex-wrap sm:grid sm:grid-cols-4 gap-2">
               {uploadProgressMultiple.map((item, index) => (
                 <DeleteImageMultiple

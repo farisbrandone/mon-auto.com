@@ -13,15 +13,15 @@ import {
   UserType,
 } from "@/lib/validations/seller";
 import { registerUser } from "@/app/actions/auth";
-import { Logo, Logo2 } from "@/components/MyLogo";
+import { Logo2 } from "@/components/MyLogo";
 import { CountrySelect } from "@/components/CountrySelect";
 import { PhoneInput } from "@/components/PhoneInput";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import Link from "next/link";
 import { fileResponseType } from "./AddAutoPage";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { uploadFile } from "@/app/actions/actions";
 
 export default function SellerSigup() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -54,32 +54,23 @@ export default function SellerSigup() {
     const mm = e.target.files;
     const docControlFormData = new FormData();
     if (!mm) return;
-    if (mm[0].size >5 * 1024 * 1024){
-      toast.error("Le fichier t")
+    if (mm[0].size > 5 * 1024 * 1024) {
+      toast.error("La taille du fichier est supérieur à 5Mo");
     }
     docControlFormData.append("file", mm[0]);
     setValue("identificationDocumentFile", mm[0]);
 
     try {
       setIsUploading(true);
-      const responsePv = await axios.post(
-        "/api/upload-file",
-        docControlFormData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            console.log(progressEvent);
-            if (progressEvent.total) {
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / (progressEvent.total || 1)
-              );
-              setUploadProgress(percentCompleted);
-            }
-          },
-        }
+
+      if (!localStorage.getItem("mon-auto-token")) {
+        router.push("/seller-signup");
+      }
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
       );
+
+      const responsePv = await uploadFile(token, docControlFormData);
 
       const keys = Object.keys(responsePv.data);
       const values = Object.values(responsePv.data) as string[];
