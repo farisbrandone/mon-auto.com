@@ -502,7 +502,7 @@ function CarsPage() {
                   setPosition={setPosition}
                   imagesAuto={val._links.imagesAuto.href}
                 />
-                <p className="w-full flex items-center justify-end text-red-600 mt-2 text-[20px] mr-1 ">
+                <p className="w-full flex items-center font-[900] justify-end text-red-600 mt-2 text-[20px] mr-1 ">
                   FCFA {formatMoney(val.prix)}
                 </p>
 
