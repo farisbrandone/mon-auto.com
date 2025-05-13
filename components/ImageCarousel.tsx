@@ -143,11 +143,13 @@ export function ImageCaroussel3({
         {imagesAuto &&
           imagesAuto.map((value) => (
             <CarouselItem key={value.id}>
-              <Image
-                src={"/" + value.url}
-                alt=""
-                className="w-full object-cover rounded-t-lg"
-              />
+              {value.url && (
+                <Image
+                  src={value.url.split("--")[0]}
+                  alt=""
+                  className="w-full object-cover rounded-t-lg"
+                />
+              )}
             </CarouselItem>
           ))}
       </CarouselContent>
