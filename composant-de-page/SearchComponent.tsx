@@ -36,6 +36,7 @@ import { useForm } from "react-hook-form";
 import { searchForm, searchSchema } from "@/lib/validations/seller";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import LoadingComponent from "@/components/LoadingComponent";
 
 export interface SearchCriteria {
   marques?: string;
@@ -171,6 +172,7 @@ function SearchComponent1() {
         const url = `${baseUrl}/newsearch?${params.toString()}&page=${currentPage}&size=4`;
         console.log(url);
         const data = await getsearchAutoData(url);
+        console.log(data);
         const newCars = data.content;
         setAutos((prev) => {
           if (!prev || reset) {
@@ -652,7 +654,7 @@ function SearchComponent1() {
             <Button
               type="button"
               onClick={() => reset()}
-              className=" w-full bg-[#1eb0fc] text-white rounded-[1px] border-[2px] border-solid border-[#33333383] lg:max-w-[300px] cursor-pointer hover:bg-white hover:text-[#1eb0fc]"
+              className=" w-full bg-red-300 text-white rounded-[1px] border-[2px] border-solid border-[#33333383] lg:max-w-[300px] cursor-pointer hover:bg-white hover:text-[#1eb0fc]"
             >
               Réinitialiser
             </Button>
@@ -661,8 +663,8 @@ function SearchComponent1() {
       </div>
       {(initialLoad && loading) || lolo ? (
         <>
-          <div className="flex justify-center py-8 col-span-2 items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-t-4 border-[#333333]"></div>
+          <div className="flex justify-center items-center py-8 col-span-2 xl:col-span-3 2xl:col-span-4 ">
+            <LoadingComponent />
           </div>
         </>
       ) : (
@@ -733,14 +735,14 @@ function SearchComponent1() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col flex-1 w-full gap-1 justify-end ">
+                  <div className="flex flex-col flex-1 w-full gap-1 justify-end px-2 ">
                     <Link
                       href={`/detail-car/${val.id}`}
-                      className=" text-center p-1 text-[18px] w-full bg-[#191919] text-white rounded-[4px] border-none border-[#33333383]  cursor-pointer hover:bg-[#cacaca] hover:text-[#191919] mx-1 transition-colors duration-500 "
+                      className=" text-center p-1 text-[18px] w-full bg-[#191919] text-white rounded-[4px] border-none border-[#33333383]  cursor-pointer hover:bg-[#cacaca] hover:text-[#191919] transition-colors duration-500 "
                     >
                       Voir les détails
                     </Link>
-                    <div className="flex items-center w-full justify-between mt-2 text-[18px] font-[400] px-2">
+                    <div className="flex items-center w-full justify-between mt-2 text-[18px] font-[400] ">
                       <div className="flex items-center">
                         <Localisation color="#d14141" />
                         <p className="ml-1 hover:text-red-600  cursor-pointer ">

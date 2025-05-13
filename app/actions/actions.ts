@@ -335,6 +335,7 @@ export async function getsearchAutoData(url: string): Promise<any> {
     console.log(response.data.content);
     return response.data;
   } catch (error) {
+    console.log("toutou");
     console.log(error);
   }
 }

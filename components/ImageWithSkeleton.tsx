@@ -55,7 +55,7 @@ const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
             top: 0,
             left: 0,
             width: "100%",
-            height: "100%",
+            height: "300px",
             background:
               "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
             backgroundSize: "200% 100%",
@@ -69,7 +69,7 @@ const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
         <img
           src={src}
           alt={alt}
-          className="w-full h-full object-cover block "
+          className="w-full max-h-[400px] object-cover block rounded-md "
           /*  style={{
             width: "100%",
             height: "100%",

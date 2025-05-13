@@ -157,3 +157,53 @@
   box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
     rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
+
+/* Ring */
+
+.loader--ring {
+  display: inline-block;
+  position: relative;
+  height: 64px;
+  width: 64px;
+}
+
+.loader--ring div {
+  display: block;
+  position: absolute;
+  animation: loader--ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border: 6px solid #e7000b;
+  border-radius: 50%;
+  box-sizing: border-box;
+  margin: 6px;
+  height: 51px;
+  width: 51px;
+}
+.loader--ring div {
+  border-color: #e7000b transparent transparent transparent;
+}
+
+.loader--dual-ring:after {
+  border-color: #e7000b transparent #e7000b transparent;
+}
+
+.loader--ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.loader--ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.loader--ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes loader--ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
