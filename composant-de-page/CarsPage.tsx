@@ -22,7 +22,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { formatDate, formatMoney } from "@/lib/utils";
+import {
+  formatDate,
+  formatMoney,
+  mapBackToFrontTypeMoteur,
+  mapBackTofrontTypeTrainConducteur,
+  mapBackToFrontTypeTransmission,
+  mapfrontToBackTypeCarburant,
+  mapfrontToBackTypeMoteur,
+  mapfrontToBackTypeTransmission,
+} from "@/lib/utils";
 
 import { useInfiniteAutos } from "@/hook/useInfiniteAuto";
 import { useForm } from "react-hook-form";
@@ -121,14 +130,7 @@ function CarsPage() {
 
     if (newCriteria.typeMoteur) {
       const value = newCriteria.typeMoteur;
-      const myValue =
-        value === "4 Cylindres"
-          ? "CYLINDRE4"
-          : value === "6 Cylindres"
-          ? "CYLINDRE6"
-          : value === "Electrique"
-          ? "ELECTRIQUE"
-          : value;
+      const myValue = mapfrontToBackTypeMoteur(value);
       params.set("typeMoteur", myValue);
     }
     if (newCriteria.selectedColor)
@@ -137,30 +139,14 @@ function CarsPage() {
     if (newCriteria.keyword) params.set("keyword", newCriteria.keyword);
     if (newCriteria.typeCarburant) {
       const value = newCriteria.typeCarburant;
-      const myValue =
-        value === "Essence"
-          ? "ESSENCE"
-          : value === "Diesel"
-          ? "DIESEL"
-          : value === "Electrique"
-          ? "ELECTRIQUE"
-          : value === "Hybride"
-          ? "HYBRIDE"
-          : value;
+      const myValue = mapfrontToBackTypeCarburant(value);
 
       params.set("typeCarburant", myValue);
     }
 
     if (newCriteria.typeTransmission) {
       const value = newCriteria.typeTransmission;
-      const myValue =
-        value === "Manuelle"
-          ? "TRANSMISSION_MANUELLE"
-          : value === "Automatique"
-          ? "TRANSMISSION_AUTOMATIQUE"
-          : value === "Semi_automatique"
-          ? "TRANSMISSION_SEMI_AUTOMATIQUE"
-          : value;
+      const myValue = mapfrontToBackTypeTransmission(value);
 
       params.set("typeTransmission", myValue);
     }
@@ -561,19 +547,16 @@ function CarsPage() {
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Moteur : </p>
                     <p className="text-end w-full">
-                      {val.typeMoteur === "CYLINDRE4"
-                        ? "4 Cylindres"
-                        : val.typeMoteur === "CYLINDRE6"
-                        ? "6 Cylindres"
-                        : "Électrique"}{" "}
+                      {mapBackToFrontTypeMoteur(val.typeMoteur)}{" "}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> chaîne de traction : </p>
                     <p className="text-end w-full">
-                      {" "}
-                      {val.typeDeTrainConducteur.replaceAll("Transmission", "")}
+                      {mapBackTofrontTypeTrainConducteur(
+                        val.typeDeTrainConducteur
+                      )}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 w-full">
@@ -583,8 +566,7 @@ function CarsPage() {
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Transmission </p>
                     <p className="text-end w-full">
-                      {" "}
-                      {val.typeTransmission.split("_")[1]}
+                      {mapBackToFrontTypeTransmission(val.typeTransmission)}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 w-full">

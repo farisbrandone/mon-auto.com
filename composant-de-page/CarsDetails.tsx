@@ -18,7 +18,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { baseUrl, formatDate, formatMoney } from "@/lib/utils";
+import {
+  baseUrl,
+  formatDate,
+  formatMoney,
+  mapBackToFrontTypeCarburant,
+  mapBackToFrontTypeMoteur,
+  mapBackTofrontTypeTrainConducteur,
+  mapBackToFrontTypeTransmission,
+} from "@/lib/utils";
 import { contactForm, contactSchema } from "@/lib/validations/seller";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -281,6 +289,20 @@ function CarsDetails() {
                   <div className="flex items-center justify-between">
                     <p>
                       {" "}
+                      <strong>Marque:</strong>{" "}
+                    </p>
+                    <p>{auto.marques}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
+                      <strong>Model:</strong>{" "}
+                    </p>
+                    <p>{auto.model}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
                       <strong>Style Carosserie:</strong>{" "}
                     </p>
                     <p>{auto.typesCarrosserie}</p>
@@ -288,14 +310,55 @@ function CarsDetails() {
                   <div className="flex items-center justify-between">
                     <p>
                       {" "}
+                      <strong>Type carburant:</strong>{" "}
+                    </p>
+                    <p>{mapBackToFrontTypeCarburant(auto.typeCarburant)}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
                       <strong>Moteur:</strong>{" "}
                     </p>
+                    <p>{mapBackToFrontTypeMoteur(auto.typeMoteur)} </p>
+                  </div>
+
+                  <div className="flex items-center justify-between">
                     <p>
-                      {auto.typeMoteur === "CYLINDRE4"
-                        ? "4 Cylindres"
-                        : auto.typeMoteur === "CYLINDRE6"
-                        ? "6 Cylindres"
-                        : "Électrique"}{" "}
+                      {" "}
+                      <strong>Transmission:</strong>{" "}
+                    </p>
+                    <p>
+                      {mapBackToFrontTypeTransmission(auto.typeTransmission)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
+                      <strong>Kilometrage:</strong>{" "}
+                    </p>
+                    <p>
+                      {formatMoney(auto.kilometrage)} {auto.kilometrageUnit}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
+                      <strong>Taille du moteur:</strong>{" "}
+                    </p>
+                    <p>{auto.tailleDuMoteur}L </p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
+                      <strong>Train d'entraînement:</strong>{" "}
+                    </p>
+                    <p>
+                      {mapBackTofrontTypeTrainConducteur(
+                        auto.typeDeTrainConducteur
+                      )}
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
@@ -318,49 +381,7 @@ function CarsDetails() {
                       <p>{auto.couleurExt.split("-")[0]}</p>{" "}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Passagers:</strong>{" "}
-                    </p>
-                    <p>{auto.nbreDePlace}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Consommation autoroute:</strong>{" "}
-                    </p>
-                    <p>
-                      {auto.conso100kmAutoRoute}
-                      {"L"}/100KM
-                    </p>
-                  </div>
-                </div>
 
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Marque:</strong>{" "}
-                    </p>
-                    <p>{auto.marques}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Kilometrage:</strong>{" "}
-                    </p>
-                    <p>
-                      {formatMoney(auto.kilometrage)} {auto.kilometrageUnit}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Taille du moteur:</strong>{" "}
-                    </p>
-                    <p>{auto.tailleDuMoteur}L </p>
-                  </div>
                   <div className="flex items-center justify-between">
                     <p>
                       {" "}
@@ -381,43 +402,15 @@ function CarsDetails() {
                       <p>{auto.couleurExt.split("-")[0]}</p>{" "}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Type carburant:</strong>{" "}
-                    </p>
-                    <p>{auto.typeCarburant}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Code produit:</strong>{" "}
-                    </p>
-                    <p>{auto.id}</p>
-                  </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <p>
                       {" "}
-                      <strong>Model:</strong>{" "}
+                      <strong>Passagers:</strong>{" "}
                     </p>
-                    <p>{auto.model}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Transmission:</strong>{" "}
-                    </p>
-                    <p>{auto.typeTransmission}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Train d'entraînement:</strong>{" "}
-                    </p>
-                    <p>{auto.typeDeTrainConducteur}</p>
+                    <p>{auto.nbreDePlace}</p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p>
@@ -425,6 +418,16 @@ function CarsDetails() {
                       <strong>Nombre de portes:</strong>{" "}
                     </p>
                     <p>{auto.nbreDePorte}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
+                      <strong>Consommation autoroute:</strong>{" "}
+                    </p>
+                    <p>
+                      {auto.conso100kmAutoRoute}
+                      {"L"}/100KM
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p>
@@ -442,6 +445,13 @@ function CarsDetails() {
                       <strong>Vignette:</strong>{" "}
                     </p>
                     <p>ascedfrgfnbvcdesq</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {" "}
+                      <strong>Code produit:</strong>{" "}
+                    </p>
+                    <p>{auto.id}</p>
                   </div>
                 </div>
               </div>
@@ -465,7 +475,7 @@ function CarsDetails() {
                 Contactez nous
               </p>
               <form
-                className="flex flex-col gap-2 w-full p-3 rounded-md"
+                className="flex flex-col gap-2 w-full p-1.5 rounded-md"
                 onSubmit={handleSubmit(onSubmit)}
               >
                 <div className=" flex flex-col sm:grid sm:grid-cols-2 w-full gap-2">

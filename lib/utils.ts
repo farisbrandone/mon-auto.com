@@ -112,3 +112,107 @@ export const processCatchRequest = async (
   }
   throw new Error(myError);
 };
+
+export function mapfrontToBackTypeCarburant(val: any) {
+  const value = val;
+  const myValue =
+    value === "Essence"
+      ? "ESSENCE"
+      : value === "Diesel"
+      ? "DIESEL"
+      : value === "Electrique"
+      ? "ELECTRIQUE"
+      : value === "Hybride"
+      ? "HYBRIDE"
+      : value;
+
+  return myValue;
+}
+
+export function mapfrontToBackTypeTransmission(val: any) {
+  const value = val;
+  const myValue =
+    value === "Manuelle"
+      ? "TRANSMISSION_MANUELLE"
+      : value === "Automatique"
+      ? "TRANSMISSION_AUTOMATIQUE"
+      : value === "Semi_automatique"
+      ? "TRANSMISSION_SEMI_AUTOMATIQUE"
+      : value;
+
+  return myValue;
+}
+
+export function mapfrontToBackTypeMoteur(val: any) {
+  const value = val;
+  const myValue =
+    value === "4 Cylindres"
+      ? "CYLINDRE4"
+      : value === "6 Cylindres"
+      ? "CYLINDRE6"
+      : value === "Electrique"
+      ? "ELECTRIQUE"
+      : value;
+
+  return myValue;
+}
+
+export function mapBackToFrontTypeCarburant(val: any) {
+  const value = val;
+  const myValue =
+    value === "ESSENCE"
+      ? "Essence"
+      : value === "DIESEL"
+      ? "Diesel"
+      : value === "ELECTRIQUE"
+      ? "Electrique"
+      : value === "HYBRIDE"
+      ? "Hybride"
+      : value;
+
+  return myValue;
+}
+
+export function mapBackToFrontTypeMoteur(val: any) {
+  const value = val;
+  const myValue =
+    value === "CYLINDRE4"
+      ? "4 Cylindres"
+      : value === "CYLINDRE6"
+      ? "6 Cylindres"
+      : value === "ELECTRIQUE"
+      ? "Electrique"
+      : value;
+
+  return myValue;
+}
+
+export function mapBackToFrontTypeTransmission(val: any) {
+  const value = val;
+  const myValue =
+    value === "TRANSMISSION_MANUELLE"
+      ? "Manuelle"
+      : value === "TRANSMISSION_AUTOMATIQUE"
+      ? "Automatique"
+      : value === "TRANSMISSION_SEMI_AUTOMATIQUE"
+      ? "Semi_automatique"
+      : value;
+
+  return myValue;
+}
+
+export function mapBackTofrontTypeTrainConducteur(val: any) {
+  const value = val;
+  const myValue =
+    value === "Traction avant (FWD)"
+      ? "Traction avant"
+      : value === "Propulsion arrière (RWD)"
+      ? "Propulsion arrière"
+      : value === "Transmission intégrale permanante (HWD)"
+      ? "intégrale permanante (HWD)"
+      : value === "Tranmission integrale enclanchable (4WD)"
+      ? "integrale enclanchable (4WD)"
+      : value;
+
+  return myValue;
+}

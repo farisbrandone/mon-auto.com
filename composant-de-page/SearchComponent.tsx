@@ -28,7 +28,19 @@ import React, {
   useState,
 } from "react";
 
-import { baseFrontUrl, baseUrl, formatDate, formatMoney } from "@/lib/utils";
+import {
+  baseFrontUrl,
+  baseUrl,
+  formatDate,
+  formatMoney,
+  mapBackToFrontTypeCarburant,
+  mapBackToFrontTypeMoteur,
+  mapBackTofrontTypeTrainConducteur,
+  mapBackToFrontTypeTransmission,
+  mapfrontToBackTypeCarburant,
+  mapfrontToBackTypeMoteur,
+  mapfrontToBackTypeTransmission,
+} from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { getsearchAutoData } from "@/app/actions/actions";
@@ -222,14 +234,7 @@ function SearchComponent1() {
 
     if (newCriteria.typeMoteur) {
       const value = newCriteria.typeMoteur;
-      const myValue =
-        value === "4 Cylindres"
-          ? "CYLINDRE4"
-          : value === "6 Cylindres"
-          ? "CYLINDRE6"
-          : value === "Electrique"
-          ? "ELECTRIQUE"
-          : value;
+      const myValue = mapfrontToBackTypeMoteur(value);
       params.set("typeMoteur", myValue);
     }
     if (newCriteria.selectedColor)
@@ -238,30 +243,14 @@ function SearchComponent1() {
     if (newCriteria.keyword) params.set("keyword", newCriteria.keyword);
     if (newCriteria.typeCarburant) {
       const value = newCriteria.typeCarburant;
-      const myValue =
-        value === "Essence"
-          ? "ESSENCE"
-          : value === "Diesel"
-          ? "DIESEL"
-          : value === "Electrique"
-          ? "ELECTRIQUE"
-          : value === "Hybride"
-          ? "HYBRIDE"
-          : value;
+      const myValue = mapfrontToBackTypeCarburant(value);
 
       params.set("typeCarburant", myValue);
     }
 
     if (newCriteria.typeTransmission) {
       const value = newCriteria.typeTransmission;
-      const myValue =
-        value === "Manuelle"
-          ? "TRANSMISSION_MANUELLE"
-          : value === "Automatique"
-          ? "TRANSMISSION_AUTOMATIQUE"
-          : value === "Semi_automatique"
-          ? "TRANSMISSION_SEMI_AUTOMATIQUE"
-          : value;
+      const myValue = mapfrontToBackTypeTransmission(value);
 
       params.set("typeTransmission", myValue);
     }
@@ -736,11 +725,7 @@ function SearchComponent1() {
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Moteur : </p>
                       <p className="text-end w-full">
-                        {val.typeMoteur === "CYLINDRE4"
-                          ? "4 Cylindres"
-                          : val.typeMoteur === "CYLINDRE6"
-                          ? "6 Cylindres"
-                          : "Électrique"}{" "}
+                        {mapBackToFrontTypeMoteur(val.typeMoteur)}{" "}
                       </p>
                     </div>
 
@@ -748,19 +733,22 @@ function SearchComponent1() {
                       <p className="font-[800]"> chaîne de traction : </p>
                       <p className="text-end w-full">
                         {" "}
-                        {val.typeDeTrainConducteur}
+                        {mapBackTofrontTypeTrainConducteur(
+                          val.typeDeTrainConducteur
+                        )}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Type de carburant : </p>
-                      <p className="text-end w-full"> {val.typeCarburant}</p>
+                      <p className="text-end w-full">
+                        {" "}
+                        {mapBackToFrontTypeCarburant(val.typeCarburant)}
+                      </p>
                     </div>
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Transmission </p>
                       <p className="text-end w-full">
-                        {" "}
-                        {val.typeTransmission.split("_")[0]}{" "}
-                        {val.typeTransmission.split("_")[1]}
+                        {mapBackToFrontTypeTransmission(val.typeTransmission)}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 w-full">
