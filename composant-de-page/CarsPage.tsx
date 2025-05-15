@@ -25,6 +25,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   formatDate,
   formatMoney,
+  mapBackToFrontTypeCarburant,
   mapBackToFrontTypeMoteur,
   mapBackTofrontTypeTrainConducteur,
   mapBackToFrontTypeTransmission,
@@ -561,7 +562,10 @@ function CarsPage() {
                   </div>
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Type de carburant : </p>
-                    <p className="text-end w-full"> {val.typeCarburant}</p>
+                    <p className="text-end w-full">
+                      {" "}
+                      {mapBackToFrontTypeCarburant(val.typeCarburant)}
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Transmission </p>
