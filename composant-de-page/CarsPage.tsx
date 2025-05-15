@@ -119,17 +119,51 @@ function CarsPage() {
     if (newCriteria.PrixMax)
       params.set("PrixMax", newCriteria.PrixMax.toString());
 
-    if (newCriteria.typeMoteur)
-      params.set("typeMoteur", newCriteria.typeMoteur);
+    if (newCriteria.typeMoteur) {
+      const value = newCriteria.typeMoteur;
+      const myValue =
+        value === "4 Cylindres"
+          ? "CYLINDRE4"
+          : value === "6 Cylindres"
+          ? "CYLINDRE6"
+          : value === "Electrique"
+          ? "ELECTRIQUE"
+          : value;
+      params.set("typeMoteur", myValue);
+    }
     if (newCriteria.selectedColor)
       params.set("selectedColor", newCriteria.selectedColor);
 
     if (newCriteria.keyword) params.set("keyword", newCriteria.keyword);
-    if (newCriteria.typeCarburant)
-      params.set("typeCarburant", newCriteria.typeCarburant);
+    if (newCriteria.typeCarburant) {
+      const value = newCriteria.typeCarburant;
+      const myValue =
+        value === "Essence"
+          ? "ESSENCE"
+          : value === "Diesel"
+          ? "DIESEL"
+          : value === "Electrique"
+          ? "ELECTRIQUE"
+          : value === "Hybride"
+          ? "HYBRIDE"
+          : value;
 
-    if (newCriteria.typeTransmission)
-      params.set("typeTransmission", newCriteria.typeTransmission);
+      params.set("typeCarburant", myValue);
+    }
+
+    if (newCriteria.typeTransmission) {
+      const value = newCriteria.typeTransmission;
+      const myValue =
+        value === "Manuelle"
+          ? "TRANSMISSION_MANUELLE"
+          : value === "Automatique"
+          ? "TRANSMISSION_AUTOMATIQUE"
+          : value === "Semi_automatique"
+          ? "TRANSMISSION_SEMI_AUTOMATIQUE"
+          : value;
+
+      params.set("typeTransmission", myValue);
+    }
     if (newCriteria.villeDuBien)
       params.set("villeDuBien", newCriteria.villeDuBien);
 
@@ -208,9 +242,13 @@ function CarsPage() {
           onClick={() => setIsOpen(!isOpen)}
         >
           <Search className="cursor-pointer" />
-          Configurer et lancer votre recherche
+          Configure et lance ta recherche
         </div>
-
+        {isOpen && (
+          <p className="text-gray-600 text-[12px] font-normal text-center w-full ">
+            Au moins un champ remplis suffit pour lancer ta recherche
+          </p>
+        )}
         <form
           ref={contentRef}
           className={`
@@ -463,6 +501,8 @@ function CarsPage() {
                   !watch().selectedColor &&
                   !watch().typeCarburant &&
                   !watch().typeMoteur &&
+                  !watch().villeDuBien &&
+                  !watch().typeTransmission &&
                   !watch().typesCarrosserie)
               }
               className=" bg-[#191919] text-white rounded-[1px] border-[2px] border-solid border-[#191919] lg:max-w-[300px] lg:flex-1 cursor-pointer hover:bg-[#bebebe] hover:text-[#191919] hover:border-[#bebebe] transition-colors duration-500 "
@@ -497,7 +537,7 @@ function CarsPage() {
                 className=" p-1 flex flex-col items-center max-w-xl mx-auto  border-[1px] border-[#00000021] border-solid  rounded-lg cardDetailShadow"
               >
                 <ImageCaroussel
-                  className="w-full max-w-xl rounded-lg"
+                  className="w-full max-w-xl rounded-lg max-h-[260px] sm:max-h-[388px] "
                   position={position}
                   setPosition={setPosition}
                   imagesAuto={val._links.imagesAuto.href}
@@ -533,7 +573,7 @@ function CarsPage() {
                     <p className="font-[800]"> chaîne de traction : </p>
                     <p className="text-end w-full">
                       {" "}
-                      {val.typeDeTrainConducteur}
+                      {val.typeDeTrainConducteur.replaceAll("Transmission", "")}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 w-full">
@@ -544,7 +584,6 @@ function CarsPage() {
                     <p className="font-[800]"> Transmission </p>
                     <p className="text-end w-full">
                       {" "}
-                      {val.typeTransmission.split("_")[0]}{" "}
                       {val.typeTransmission.split("_")[1]}
                     </p>
                   </div>

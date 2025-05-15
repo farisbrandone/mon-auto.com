@@ -220,17 +220,51 @@ function SearchComponent1() {
     if (newCriteria.PrixMax)
       params.set("PrixMax", newCriteria.PrixMax.toString());
 
-    if (newCriteria.typeMoteur)
-      params.set("typeMoteur", newCriteria.typeMoteur);
+    if (newCriteria.typeMoteur) {
+      const value = newCriteria.typeMoteur;
+      const myValue =
+        value === "4 Cylindres"
+          ? "CYLINDRE4"
+          : value === "6 Cylindres"
+          ? "CYLINDRE6"
+          : value === "Electrique"
+          ? "ELECTRIQUE"
+          : value;
+      params.set("typeMoteur", myValue);
+    }
     if (newCriteria.selectedColor)
       params.set("selectedColor", newCriteria.selectedColor);
 
     if (newCriteria.keyword) params.set("keyword", newCriteria.keyword);
-    if (newCriteria.typeCarburant)
-      params.set("typeCarburant", newCriteria.typeCarburant);
+    if (newCriteria.typeCarburant) {
+      const value = newCriteria.typeCarburant;
+      const myValue =
+        value === "Essence"
+          ? "ESSENCE"
+          : value === "Diesel"
+          ? "DIESEL"
+          : value === "Electrique"
+          ? "ELECTRIQUE"
+          : value === "Hybride"
+          ? "HYBRIDE"
+          : value;
 
-    if (newCriteria.typeTransmission)
-      params.set("typeTransmission", newCriteria.typeTransmission);
+      params.set("typeCarburant", myValue);
+    }
+
+    if (newCriteria.typeTransmission) {
+      const value = newCriteria.typeTransmission;
+      const myValue =
+        value === "Manuelle"
+          ? "TRANSMISSION_MANUELLE"
+          : value === "Automatique"
+          ? "TRANSMISSION_AUTOMATIQUE"
+          : value === "Semi_automatique"
+          ? "TRANSMISSION_SEMI_AUTOMATIQUE"
+          : value;
+
+      params.set("typeTransmission", myValue);
+    }
     if (newCriteria.villeDuBien)
       params.set("villeDuBien", newCriteria.villeDuBien);
     // Add other parameters as needed

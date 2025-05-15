@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { sendContact } from "@/app/actions/actions";
 import HeaderCars from "@/components/HeaderCars";
+import Footer from "@/components/Footer";
 
 export default function MessagePage() {
   const [disableAfterSend, setDisableAfterSend] = useState(false);
@@ -52,7 +53,7 @@ export default function MessagePage() {
   };
 
   return (
-    <div className="bg-white flex  justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
+    <div className="bg-white flex   justify-center items-center w-screen h-screen text-[#636364] p-2 text-[16px] ">
       <div className="fixed w-full p-0 top-0">
         <HeaderCars />
       </div>
@@ -61,12 +62,12 @@ export default function MessagePage() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="max-w-[500px] mx-auto p-4 loginShaddow max-sm:mt-40 mb-2"
+        className="max-w-[500px] mx-auto p-4 pb-1 loginShaddow max-sm:mt-40 mb-2 rounded-lg"
       >
         <div className="w-full ">
           <p className="w-full text-center text-[18px] font-[600] text-[#333333] mb-2 sm:mb-3 mt-2 ">
             {" "}
-            Contactez nous
+            Veuillez nous contacter
           </p>
           <form
             className="flex flex-col gap-2 w-full p-2 rounded-md"
@@ -146,21 +147,23 @@ export default function MessagePage() {
               )}
             </div>
 
-            <Button
-              type="submit"
-              className="w-[250px] mx-auto text-[18px]  my-2 p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
-              onClick={handleSubmit(onSubmit)}
-              disabled={disableAfterSend}
-            >
-              {isSubmitting ? "en cours..." : "Soumettre"}
-            </Button>
-            <Button
-              type="button"
-              className="w-[250px] mx-auto text-[18px] p-2 bg-red-400 text-white border-none   cursor-pointer hover:bg-red-300/65 transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
-              onClick={() => router.back()}
-            >
-              Retour
-            </Button>
+            <div className="flex  items-center gap-2 justify-end w-full mt-2">
+              <Button
+                type="submit"
+                className="  text-[18px] p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
+                onClick={handleSubmit(onSubmit)}
+                disabled={disableAfterSend}
+              >
+                {isSubmitting ? "en cours..." : "Soumettre"}
+              </Button>
+              <Button
+                type="button"
+                className="  text-[18px] p-2 bg-red-400 text-white border-none   cursor-pointer hover:bg-red-300/65 transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
+                onClick={() => router.back()}
+              >
+                Retour
+              </Button>
+            </div>
           </form>
         </div>
       </motion.div>

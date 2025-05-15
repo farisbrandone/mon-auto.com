@@ -111,7 +111,7 @@ export function ImageCaroussel2({
           images.map((value, index) => (
             <CarouselItem key={index}>
               {value.url && (
-                <Image
+                <ImageWithSkeleton
                   src={value.url.split("--")[0]}
                   alt=""
                   className="w-full object-cover rounded-t-lg"
@@ -144,7 +144,7 @@ export function ImageCaroussel3({
           imagesAuto.map((value) => (
             <CarouselItem key={value.id}>
               {value.url && (
-                <Image
+                <ImageWithSkeleton
                   src={value.url.split("--")[0]}
                   alt=""
                   className="w-full object-cover rounded-t-lg"

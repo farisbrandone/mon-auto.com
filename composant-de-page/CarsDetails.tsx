@@ -95,13 +95,15 @@ function CarsDetails() {
         <HeaderCars />
         <Link
           href="/cars"
-          className="flex items-center mt-2 cursor-pointer pl-2 max-w-[200px] "
+          className="flex items-center mt-2 cursor-pointer pl-2 w-[250px] "
         >
           <div className="p-1.5 bg-[#1eb0fc] flex items-center rounded-sm ">
             <Previous />
             <Previous className="-ml-1" />
           </div>
-          <p className="ml-2">retour à l'inventaire</p>
+          <p className="ml-2 w-full flex-1 font-[800] ">
+            Retour à l'inventaire
+          </p>
         </Link>
         <div className="flex flex-grow flex-col gap-1 sm:grid sm:grid-cols-2 mt-2 mb-2 p-2">
           {/*  <div className="flex items-center space-x-4 max-w-7xl p-1 mx-auto">
@@ -264,7 +266,7 @@ function CarsDetails() {
             />
 
             <div className="mt-2 flex flex-col w-full">
-              <p className="text-[18px] font-black mb-4 p-2 ">
+              <p className="text-[18px] font-black mb-2 p-2 ">
                 Caractéristiques
               </p>
               <div className="flex flex-col  sm:grid sm:grid-cols-3 p-2.5 sm:gap-3">
