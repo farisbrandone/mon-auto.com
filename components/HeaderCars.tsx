@@ -35,7 +35,7 @@ function HeaderCars() {
           className="hidden lg:flex lg:items-center w-[180px] text-[18px] text-[#333333] bg-white rounded-md p-1 font-bold  "
         >
           <Plus className="mr-1" />
-          Ajouter une auto
+          Ajoute une auto
         </Link>
         {/*  <Hamburger width={30} height={30} color="white" /> */}
       </div>

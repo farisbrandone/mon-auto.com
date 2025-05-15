@@ -22,10 +22,10 @@ export function DropdownMenuDemo() {
           <Hamburger />{" "}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-2 font-[900] text-[16px] mr-6 ">
+      <DropdownMenuContent className="p font-[900] text-[16px] mr-6">
         <DropdownMenuItem onClick={() => router.push("/add-auto")}>
           <Plus />
-          Ajouter une auto
+          Ajoute une auto
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
