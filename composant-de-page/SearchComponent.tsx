@@ -319,7 +319,7 @@ function SearchComponent1() {
 
   const handleSubmit2 = (): SearchCriteria => {
     const params = Object.fromEntries(searchParams.entries());
-    if (params.selectedColor)
+    /*  if (params.selectedColor)
       setSelectedColor({
         label: params.selectedColor.split("-")[0],
         value: params.selectedColor.split("-")[1],
@@ -348,7 +348,7 @@ function SearchComponent1() {
     if (params.typeTransmission)
       setValue("typeTransmission", params.typeTransmission);
 
-    if (params.villeDuBien) setValue("villeDuBien", params.villeDuBien);
+    if (params.villeDuBien) setValue("villeDuBien", params.villeDuBien); */
 
     const queryState: SearchCriteria = {};
 
@@ -410,7 +410,7 @@ function SearchComponent1() {
           onClick={() => setIsOpen(!isOpen)}
         >
           <Search className="cursor-pointer" />
-          Configurer et lancer votre recherche
+          Configure et lance ta recherche
         </div>
 
         <form
