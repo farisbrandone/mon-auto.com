@@ -677,7 +677,7 @@ function SearchComponent1() {
             <Button
               type="button"
               onClick={() => reset()}
-              className=" w-full bg-red-300 text-white rounded-[1px] border-[2px] border-solid border-[#33333383] lg:max-w-[300px] cursor-pointer hover:bg-white hover:text-[#1eb0fc]"
+              className=" w-full bg-red-600 text-white rounded-[1px] border-[2px] border-solid border-red-600 lg:max-w-[300px] cursor-pointer hover:border-white hover:bg-gray-300 hover:text-black"
             >
               Réinitialiser
             </Button>
