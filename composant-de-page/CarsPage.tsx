@@ -223,7 +223,7 @@ function CarsPage() {
     <div className="text-black text-[16px] min-h-screen flex flex-col ">
       <HeaderCars />
       <ScrollToTopButton />
-      <div className="flex flex-col gap-1 px-1 sm:px-4  py-3 my-4 mx-2 border-[#33333349] border-solid border-[2px] shadow-2xl rounded-md font-playfair ">
+      <div className=" flex flex-col gap-1 px-1 sm:px-4  py-3 my-4 mt-[100px] mx-2 border-[#33333349] border-solid border-[2px] shadow-2xl rounded-md font-playfair ">
         <div
           className="flex items-center gap-1 transition-colors cursor-pointer "
           onClick={() => setIsOpen(!isOpen)}

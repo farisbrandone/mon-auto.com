@@ -233,7 +233,7 @@ function CarsDetails() {
       <ScrollToTopButton />
       <Link
         href="/cars"
-        className="flex items-center mt-2 cursor-pointer pl-2 w-[250px] "
+        className="flex items-center  cursor-pointer pl-2 w-[250px] mt-[100px] "
       >
         <div className="p-1.5 bg-[#333333] flex items-center rounded-sm ">
           <Previous color="white" />

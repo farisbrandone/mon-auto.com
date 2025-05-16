@@ -62,9 +62,7 @@ export default function AddAutoPage() {
     reset,
   } = useForm<SellerFormData>({
     resolver: zodResolver(SellerSchema),
-    defaultValues: {
-      lastMaintenanceDate: new Date(),
-    },
+    defaultValues: {},
   });
 
   console.log(errors);
@@ -478,7 +476,7 @@ export default function AddAutoPage() {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto my-10 p-6 bg-white">
+    <div className="max-w-2xl mx-auto my-10 p-6 bg-white font-playfair">
       <MyLogo />
       <ScrollToTopButton />
       <motion.div
@@ -490,9 +488,11 @@ export default function AddAutoPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 ">
           {/* Spécialisations */}
           <div className="space-y-4 ">
-            <h2 className="text-xl font-semibold">Caractéristique de l'auto</h2>
+            <h2 className="text-[16px]  sm:text-[18px] font-semibold">
+              Caractéristique de l'auto
+            </h2>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="mymarque"
                 className="block text-sm font-medium text-gray-700"
@@ -530,7 +530,7 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="mymodels"
                 className="block text-sm font-medium text-gray-700"
@@ -551,10 +551,10 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="mytypescarrosserie"
-                className="block text-sm font-medium text-gray-700"
+                className="block  font-medium text-gray-700"
               >
                 Type de carrosserie
               </label>
@@ -578,7 +578,7 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="couleurExt"
                 className="block text-sm font-medium text-gray-700"
@@ -594,7 +594,7 @@ export default function AddAutoPage() {
               />
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="couleurExt"
                 className="block text-sm font-medium text-gray-700"
@@ -610,7 +610,7 @@ export default function AddAutoPage() {
               />
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="mytypescarburant"
                 className="block text-sm font-medium text-gray-700"
@@ -637,7 +637,7 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="typeTransmission"
                 className="block text-sm font-medium text-gray-700"
@@ -663,7 +663,7 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="typeMoteur"
                 className="block text-sm font-medium text-gray-700"
@@ -694,7 +694,7 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="typeDeTrainConducteur"
                 className="block text-sm font-medium text-gray-700"
@@ -721,7 +721,7 @@ export default function AddAutoPage() {
               )}
             </div>
 
-            <div>
+            <div className="text-sm">
               <label
                 htmlFor="couleurExt"
                 className="block text-sm font-medium text-gray-700"
