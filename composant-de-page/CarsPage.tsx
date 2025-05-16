@@ -223,7 +223,7 @@ function CarsPage() {
     <div className="text-black text-[16px] min-h-screen flex flex-col ">
       <HeaderCars />
       <ScrollToTopButton />
-      <div className="flex flex-col gap-1 px-1 sm:px-4  py-3 my-4 mx-2 border-[#33333349] border-solid border-[2px] shadow-2xl rounded-md  ">
+      <div className="flex flex-col gap-1 px-1 sm:px-4  py-3 my-4 mx-2 border-[#33333349] border-solid border-[2px] shadow-2xl rounded-md font-playfair ">
         <div
           className="flex items-center gap-1 transition-colors cursor-pointer "
           onClick={() => setIsOpen(!isOpen)}
@@ -232,7 +232,7 @@ function CarsPage() {
           Configure et lance ta recherche
         </div>
         {isOpen && (
-          <p className="text-gray-600 text-[12px] font-normal text-center w-full ">
+          <p className="text-gray-600 text-[12px] text-center w-full ">
             Au moins un champ remplis suffit pour lancer ta recherche
           </p>
         )}
@@ -492,7 +492,7 @@ function CarsPage() {
                   !watch().typeTransmission &&
                   !watch().typesCarrosserie)
               }
-              className=" bg-[#191919] text-white rounded-[1px] border-[2px] border-solid border-[#191919] lg:max-w-[300px] lg:flex-1 cursor-pointer hover:bg-[#bebebe] hover:text-[#191919] hover:border-[#bebebe] transition-colors duration-500 "
+              className=" bg-[#191919] text-white rounded-[1px] border-[2px] border-solid border-[#191919] lg:max-w-[300px] lg:flex-1 cursor-pointer hover:bg-[#bebebe] hover:text-[#191919] hover:border-[#bebebe] transition-colors duration-500 disabled:cursor-not-allowed"
             >
               {
                 /* !startSending */ !isSubmitting
@@ -507,7 +507,7 @@ function CarsPage() {
                 reset();
                 setSelectedColor(null);
               }}
-              className=" w-full bg-red-300 text-white rounded-[1px] border-[2px] border-solid border-[#33333383] lg:max-w-[300px] cursor-pointer hover:bg-white hover:text-[#1eb0fc]"
+              className=" w-full bg-red-400 text-white rounded-[1px] border-[2px] border-solid border-red-400 lg:max-w-[300px] cursor-pointer hover:border-white hover:bg-gray-300 hover:text-black "
             >
               Réinitialiser
             </Button>
@@ -540,21 +540,21 @@ function CarsPage() {
                 <div className="flex flex-col gap-3 w-full p-2">
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Kilometrage : </p>
-                    <p className="text-end w-full">
+                    <p className=" w-full">
                       {" "}
                       {formatMoney(val.kilometrage)} {val.kilometrageUnit}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Moteur : </p>
-                    <p className="text-end w-full">
+                    <p className=" w-full">
                       {mapBackToFrontTypeMoteur(val.typeMoteur)}{" "}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> chaîne de traction : </p>
-                    <p className="text-end w-full">
+                    <p className=" w-full">
                       {mapBackTofrontTypeTrainConducteur(
                         val.typeDeTrainConducteur
                       )}
@@ -562,20 +562,20 @@ function CarsPage() {
                   </div>
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Type de carburant : </p>
-                    <p className="text-end w-full">
+                    <p className=" w-full">
                       {" "}
                       {mapBackToFrontTypeCarburant(val.typeCarburant)}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Transmission </p>
-                    <p className="text-end w-full">
+                    <p className=" w-full">
                       {mapBackToFrontTypeTransmission(val.typeTransmission)}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 w-full">
                     <p className="font-[800]"> Ville : </p>
-                    <p className="text-end w-full"> {val.villeDuBien} </p>
+                    <p className=" w-full"> {val.villeDuBien} </p>
                   </div>
                 </div>
                 <div className="flex flex-col flex-1 w-full gap-1 justify-end px-2 ">

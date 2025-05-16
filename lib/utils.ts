@@ -209,9 +209,9 @@ export function mapBackTofrontTypeTrainConducteur(val: any) {
       : value === "Propulsion arrière (RWD)"
       ? "Propulsion arrière"
       : value === "Transmission intégrale permanante (HWD)"
-      ? "intégrale permanante (HWD)"
+      ? "HWD"
       : value === "Tranmission integrale enclanchable (4WD)"
-      ? "integrale enclanchable (4WD)"
+      ? "4WD"
       : value;
 
   return myValue;

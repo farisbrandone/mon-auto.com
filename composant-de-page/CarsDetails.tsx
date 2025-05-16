@@ -228,16 +228,16 @@ function CarsDetails() {
   }
 
   return (
-    <div className="relative text-black text-[14px] sm:text-[16px] min-h-screen flex flex-col  ">
+    <div className="relative text-black text-[14px] sm:text-[16px] min-h-screen flex flex-col font-playfair  ">
       <HeaderCars />
       <ScrollToTopButton />
       <Link
         href="/cars"
         className="flex items-center mt-2 cursor-pointer pl-2 w-[250px] "
       >
-        <div className="p-1.5 bg-[#1eb0fc] flex items-center rounded-sm ">
-          <Previous />
-          <Previous className="-ml-1" />
+        <div className="p-1.5 bg-[#333333] flex items-center rounded-sm ">
+          <Previous color="white" />
+          <Previous color="white" className="-ml-1" />
         </div>
         <p className="ml-2 w-full flex-1 font-[800] ">Retour à l'inventaire</p>
       </Link>
@@ -279,42 +279,42 @@ function CarsDetails() {
               </p>
               <div className="flex flex-col  sm:grid sm:grid-cols-3 p-2.5 sm:gap-3">
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
+                  <div className=" grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Année:</strong>{" "}
                     </p>
                     <p>{formatDate(auto?.anneeDeFabrication)}</p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className=" grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Marque:</strong>{" "}
                     </p>
                     <p>{auto.marques}</p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className=" grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Model:</strong>{" "}
                     </p>
                     <p>{auto.model}</p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className=" grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Style Carosserie:</strong>{" "}
                     </p>
                     <p>{auto.typesCarrosserie}</p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className=" grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Type carburant:</strong>{" "}
                     </p>
                     <p>{mapBackToFrontTypeCarburant(auto.typeCarburant)}</p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className=" grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Moteur:</strong>{" "}
@@ -322,7 +322,7 @@ function CarsDetails() {
                     <p>{mapBackToFrontTypeMoteur(auto.typeMoteur)} </p>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Transmission:</strong>{" "}
@@ -334,7 +334,7 @@ function CarsDetails() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Kilometrage:</strong>{" "}
@@ -343,14 +343,14 @@ function CarsDetails() {
                       {formatMoney(auto.kilometrage)} {auto.kilometrageUnit}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Taille du moteur:</strong>{" "}
                     </p>
                     <p>{auto.tailleDuMoteur}L </p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Train d'entraînement:</strong>{" "}
@@ -361,10 +361,24 @@ function CarsDetails() {
                       )}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
+                    <p className="w-full">
+                      {" "}
+                      <strong>Nbre de place:</strong>{" "}
+                    </p>
+                    <p>{auto.nbreDePlace}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
-                      <strong>Couleur extérieur:</strong>{" "}
+                      <strong>Nbre de portes:</strong>{" "}
+                    </p>
+                    <p>{auto.nbreDePorte}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <p>
+                      {" "}
+                      <strong>Couleur ext:</strong>{" "}
                     </p>
                     <div className="flex items-center gap-1">
                       {" "}
@@ -382,10 +396,10 @@ function CarsDetails() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
-                      <strong>Couleur intérieur:</strong>{" "}
+                      <strong>Couleur int:</strong>{" "}
                     </p>
                     <div className="flex items-center gap-1">
                       {" "}
@@ -405,48 +419,27 @@ function CarsDetails() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
-                      <strong>Passagers:</strong>{" "}
-                    </p>
-                    <p>{auto.nbreDePlace}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Nombre de portes:</strong>{" "}
-                    </p>
-                    <p>{auto.nbreDePorte}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Consommation autoroute:</strong>{" "}
+                      <strong>Conso autoroute:</strong>{" "}
                     </p>
                     <p>
                       {auto.conso100kmAutoRoute}
                       {"L"}/100KM
                     </p>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
-                      <strong>Consommation ville:</strong>{" "}
+                      <strong>Conso ville:</strong>{" "}
                     </p>
                     <p>
                       {auto.conso100kmVille}
                       {"L"}/100KM
                     </p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <p>
-                      {" "}
-                      <strong>Vignette:</strong>{" "}
-                    </p>
-                    <p>ascedfrgfnbvcdesq</p>
-                  </div>
-                  <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-2 gap-3">
                     <p>
                       {" "}
                       <strong>Code produit:</strong>{" "}
@@ -461,16 +454,16 @@ function CarsDetails() {
 
         <div className="flex flex-col p-2 ">
           {auto && (
-            <div className="flex items-center justify-between mb-2 p-2 bg-[#cccacaa1] rounded-md mt-5 ">
-              <p className="text-[18px] font-black ">Prix d'achat:</p>
-              <p className="text-[18px] font-black text-red-600 ">
+            <div className="flex items-center justify-between mb-2 p-2 bg-[#333333] rounded-md mt-5 ">
+              <p className="text-[18px] font-black text-white">Prix :</p>
+              <p className="text-[18px] font-black text-white ">
                 FCFA {formatMoney(auto.prix)}{" "}
               </p>
             </div>
           )}
           {
             <div className="w-full mt-4 border-[1px] border-solid border-[#33333359] shadow-2xl rounded-md ">
-              <p className="w-full text-center text-[18px] font-[600] text-[#333333] mb-4 mt-2 ">
+              <p className="w-full text-center text-[16px] font-[600] text-[#333333] mb-2 mt-2 ">
                 {" "}
                 Contactez nous
               </p>
@@ -554,7 +547,7 @@ function CarsDetails() {
 
                 <Button
                   type="submit"
-                  className="w-[120px] text-[18px] p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
+                  className="w-[120px] text-[14px] sm:text-[16px] p-2 bg-[#333333] text-white border-none   cursor-pointer hover:bg-[#3333338a] transition-colors duration-300  rounded-md disabled:cursor-not-allowed "
                   onClick={handleSubmit(onSubmit)}
                   disabled={isSubmitting || disableAfterSend}
                 >

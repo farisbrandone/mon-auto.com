@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 //import { Mona_Sans } from "next/font/google";
 import "./globals.css";
-import { Inter, Belleza } from "next/font/google";
+import { Inter, Belleza, Poppins } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 
 /* import * as font from "next/font/google";
@@ -15,8 +15,8 @@ const inter = Inter({
 });
 
 // Configure Playfair Display (Serif - for headings)
-const playfair = Belleza({
-  weight: ["400"],
+const playfair = Poppins({
+  weight: ["600"],
   subsets: ["latin"],
   variable: "--font-playfair",
   display: "swap",

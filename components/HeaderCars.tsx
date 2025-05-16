@@ -12,7 +12,7 @@ import Image from "next/image";
 function HeaderCars() {
   const router = useRouter();
   return (
-    <div className="flex items-center justify-between w-full bg-[#333333] px-4 py-2 sm:py-5">
+    <div className="flex items-center justify-between w-full bg-[#333333] px-4 py-1 sm:py-2">
       <div
         className="w-[40px] h-[40px] flex items-center justify-center cursor-pointer "
         title="Envoyez-nous un message"
@@ -26,7 +26,7 @@ function HeaderCars() {
         alt=""
         width={100}
         height={100}
-        className="w-[100px] h-[100px] object-cover cursor-pointer "
+        className="w-[70px] h-[70px] object-cover cursor-pointer "
       />
       <div className="w-[35px] h-[35px] lg:w-[180px] flex items-center justify-center cursor-pointer ">
         <DropdownMenuDemo />

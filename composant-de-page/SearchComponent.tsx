@@ -340,13 +340,23 @@ function SearchComponent1() {
     if (params.PrixMin) setValue("PrixMin", Number(params.PrixMin));
     if (params.PrixMax) setValue("PrixMax", Number(params.PrixMax));
 
-    if (params.typeMoteur) setValue("typeMoteur", params.typeMoteur);
+    if (params.typeMoteur)
+      setValue("typeMoteur", mapBackToFrontTypeMoteur(params.typeMoteur));
     if (params.selectedColor) setValue("selectedColor", params.selectedColor);
 
     if (params.keyword) setValue("keyword", params.keyword);
-    if (params.typeCarburant) setValue("typeCarburant", params.typeCarburant);
+    if (params.typeCarburant)
+      setValue(
+        "typeCarburant",
+        mapBackToFrontTypeCarburant(params.typeCarburant)
+      );
     if (params.typeTransmission)
-      setValue("typeTransmission", params.typeTransmission);
+      setValue(
+        "typeTransmission",
+        mapBackToFrontTypeTransmission(
+          mapBackToFrontTypeTransmission(params.typeTransmission)
+        )
+      );
 
     if (params.villeDuBien) setValue("villeDuBien", params.villeDuBien);
 
@@ -665,7 +675,7 @@ function SearchComponent1() {
                   !watch().typeMoteur &&
                   !watch().typesCarrosserie)
               }
-              className=" bg-[#191919] text-white rounded-[1px] border-[2px] border-solid border-[#191919] lg:max-w-[300px] lg:flex-1 cursor-pointer hover:bg-[#bebebe] hover:text-[#191919] hover:border-[#bebebe] transition-colors duration-500 "
+              className=" bg-[#191919] text-white rounded-[1px] border-[2px] border-solid border-[#191919] lg:max-w-[300px] lg:flex-1 cursor-pointer hover:bg-[#bebebe] hover:text-[#191919] hover:border-[#bebebe] font-playfair transition-colors duration-500 "
             >
               {
                 /* !startSending */ !isSubmitting
@@ -677,7 +687,7 @@ function SearchComponent1() {
             <Button
               type="button"
               onClick={() => reset()}
-              className=" w-full bg-red-600 text-white rounded-[1px] border-[2px] border-solid border-red-600 lg:max-w-[300px] cursor-pointer hover:border-white hover:bg-gray-300 hover:text-black"
+              className=" w-full bg-red-400 text-white rounded-[1px] border-[2px] border-solid border-red-400 lg:max-w-[300px] cursor-pointer hover:border-white hover:bg-gray-300 hover:text-black"
             >
               Réinitialiser
             </Button>
@@ -717,21 +727,21 @@ function SearchComponent1() {
                   <div className="flex flex-col gap-3 w-full p-2">
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Kilometrage : </p>
-                      <p className="text-end w-full">
+                      <p className=" w-full">
                         {" "}
                         {formatMoney(val.kilometrage)} {val.kilometrageUnit}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Moteur : </p>
-                      <p className="text-end w-full">
+                      <p className=" w-full">
                         {mapBackToFrontTypeMoteur(val.typeMoteur)}{" "}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> chaîne de traction : </p>
-                      <p className="text-end w-full">
+                      <p className=" w-full">
                         {" "}
                         {mapBackTofrontTypeTrainConducteur(
                           val.typeDeTrainConducteur
@@ -740,20 +750,20 @@ function SearchComponent1() {
                     </div>
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Type de carburant : </p>
-                      <p className="text-end w-full">
+                      <p className=" w-full">
                         {" "}
                         {mapBackToFrontTypeCarburant(val.typeCarburant)}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Transmission </p>
-                      <p className="text-end w-full">
+                      <p className=" w-full">
                         {mapBackToFrontTypeTransmission(val.typeTransmission)}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 w-full">
                       <p className="font-[800]"> Ville : </p>
-                      <p className="text-end w-full"> {val.villeDuBien} </p>
+                      <p className=" w-full"> {val.villeDuBien} </p>
                     </div>
                   </div>
 
