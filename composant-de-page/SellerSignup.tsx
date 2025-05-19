@@ -112,10 +112,12 @@ export default function SellerSigup() {
     formData.set("email", data.email);
     formData.set(
       "identificationDocumentFile",
-      downloadUrl?.url + "--" + downloadUrl?.originalName
+      downloadUrl?.url
+        ? downloadUrl?.url + "--" + downloadUrl?.originalName
+        : ""
     );
     //formData.set("identificationDocumentFile", data.identificationDocumentFile);
-    formData.set("description", data.description);
+    formData.set("description", data.description ? data.description : "");
     formData.set("typeSeller", data.typeSeller);
     formData.set("adresse", data.adresse);
     formData.set(
@@ -392,7 +394,7 @@ export default function SellerSigup() {
             </div>
           </div> */}
           {/* Description */}
-          <div>
+          {/*   <div>
             <label
               htmlFor="description"
               className="block text-sm font-medium text-gray-700"
@@ -410,7 +412,7 @@ export default function SellerSigup() {
                 {errors.description.message}
               </p>
             )}
-          </div>
+          </div> */}
           {/* Type d'utilisateur */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -531,14 +533,14 @@ export default function SellerSigup() {
 
             <PhoneInput
               name="phone"
-              label="Phone Number"
+              label="Téléphone"
               error={errors.phone?.message}
               register={register}
             />
           </div>
           <PhoneInput
             name="phoneWhatsapp"
-            label="Phone number Whatsapp"
+            label="Téléphone Whatsapp"
             error={errors.phoneWhatsapp?.message}
             register={register}
           />

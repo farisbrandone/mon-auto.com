@@ -52,7 +52,11 @@ export const UserStatus = z.enum(["ACTIVATE", "DESACTIVATE"]);
 export const SellerSchema = z.object({
   marques: z.string(z.enum(MARQUES)).min(1, "Sélectionnez au moins une marque"),
   model: z.string().min(1, "Doit contenir au moins un caractères"),
-
+  climatisation: z.string().default("").optional(),
+  descriptionAuto: z
+    .string()
+    .min(0, "Doit contenir au moins un caractères")
+    .optional(),
   villeDuBien: z
     .string()
     .min(1, "Doit contenir au moins un caractères")
@@ -210,7 +214,8 @@ export const RegisterSchema = z
       ), */
     description: z
       .string()
-      .min(10, "La description doit contenir au moins 10 caractères"),
+      .min(10, "La description doit contenir au moins 10 caractères")
+      .optional(),
     typeSeller: UserType,
     adresse: z.string().min(5, "L'adresse doit contenir au moins 5 caractères"),
     roleSeller: z.array(z.string()).default(["USER"]),
@@ -399,7 +404,11 @@ export type RegisterUpdateFormData = z.infer<typeof RegisterUpdateSchema>;
 export const SellerUpdateSchema = z.object({
   marques: z.string(z.enum(MARQUES)).min(1, "Sélectionnez au moins une marque"),
   model: z.string().min(1, "Doit contenir au moins un caractères"),
-
+  climatisation: z.string().default("").optional(),
+  descriptionAuto: z
+    .string()
+    .min(0, "Doit contenir au moins un caractères")
+    .optional(),
   villeDuBien: z
     .string()
     .min(1, "Doit contenir au moins un caractères")

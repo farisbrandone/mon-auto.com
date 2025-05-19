@@ -67,6 +67,8 @@ export async function registerSeller(formData: FormData) {
     dateOfCreated: new Date().toISOString(),
     dateOfModified: new Date().toISOString(),
     userToken: formData.get("mon-auto-token"),
+    descriptionAuto: formData.get("descriptionAuto"),
+    climatisation: formData.get("climatisation"),
   };
 
   // Valider les données
@@ -248,6 +250,8 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
       : "",
     dateOfModified: new Date().toISOString(),
     dateOfCreated: new Date(formData.get("dateOfCreated") as string),
+    descriptionAuto: formData.get("descriptionAuto"),
+    climatisation: formData.get("climatisation"),
   };
 
   console.log(rawData);

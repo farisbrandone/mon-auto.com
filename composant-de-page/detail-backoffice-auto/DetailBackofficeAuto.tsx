@@ -289,11 +289,17 @@ export default function DetailBackofficeAuto() {
     formData.set("statusOfAuto", data.statusOfAuto);
     formData.set(
       "pvControleTechnique",
-      downloadUrlPv?.url + "--" + downloadUrlPv?.originalName
+      data.pvControleTechnique
+        ? downloadUrlPv?.url + "--" + downloadUrlPv?.originalName
+        : ""
     );
     formData.set(
       "carteGrise",
-      downloadUrlCartegrise?.url + "--" + downloadUrlCartegrise?.originalName
+      data.carteGrise
+        ? downloadUrlCartegrise?.url +
+            "--" +
+            downloadUrlCartegrise?.originalName
+        : ""
     );
     formData.set(
       "anneeDeFabrication",
@@ -308,6 +314,11 @@ export default function DetailBackofficeAuto() {
       "immatriculation",
       data.immatriculation ? data.immatriculation : ""
     );
+    formData.set(
+      "descriptionAuto",
+      data.descriptionAuto ? data.descriptionAuto : ""
+    );
+    formData.set("climatisation", data.climatisation ? data.climatisation : "");
     if (data.imagesAuto) {
       let i: number = 0;
       console.log(data.imagesAuto);
@@ -577,6 +588,8 @@ export default function DetailBackofficeAuto() {
         setValue("typeTransmission", trans);
         setValue("typesCarrosserie", newAutos.typesCarrosserie);
         setValue("villeDuBien", newAutos.villeDuBien);
+        setValue("climatisation", newAutos.climatisation);
+        setValue("descriptionAuto", newAutos.descriptionAuto);
         newAutos.villeDuBien && setSelectedCity({ city: newAutos.villeDuBien });
         setDateOfCreated(newAutos.dateOfCreated);
         setLoading(false);
@@ -1165,7 +1178,7 @@ export default function DetailBackofficeAuto() {
             </div>
           </div>
 
-          <div>
+          {/*  <div>
             <label className="block text-sm font-medium text-gray-700">
               Insérer la Carte grise du véhicule
             </label>
@@ -1233,8 +1246,8 @@ export default function DetailBackofficeAuto() {
               </p>
             )}
           </div>
-
-          <div>
+ */}
+          {/*    <div>
             <label className="block text-sm font-medium text-gray-700">
               Insérer le Procès verbal du controle technique du véhicule
             </label>
@@ -1256,22 +1269,18 @@ export default function DetailBackofficeAuto() {
               ) : (
                 <div className="flex flex-col items-center">
                   <div className="flex text-sm text-gray-600">
-                    {/*  <label
-                              htmlFor="pvControleTechnique"
-                              className="relative cursor-pointer rounded-md bg-slate-200 p-2 font-medium text-blue-600 hover:text-blue-500"
-                            >
-                              <span>Télécharger un fichier</span> */}
+                  
                     <input
                       id="pvControleTechnique"
                       type="file"
-                      /* accept="image/jpeg, image/png, image/webp" */
+                     
                       className="sr-only"
                       ref={fileInputRefPv}
                       onChange={(e) => {
                         handleFilePv(e);
                       }}
                     />
-                    {/*  </label> */}
+                   
                     <button
                       type="button"
                       onClick={() => {
@@ -1305,6 +1314,51 @@ export default function DetailBackofficeAuto() {
             {errors.pvControleTechnique && (
               <p className="mt-1 text-sm text-red-600">
                 {errors.pvControleTechnique.message}
+              </p>
+            )}
+          </div>
+ */}
+          <div className="text-sm">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Description du véhicule
+            </label>
+            <textarea
+              id="description"
+              {...register("descriptionAuto")}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Décrit le véhicule avec tes propres mots"
+            />
+            {errors.immatriculation && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.descriptionAuto?.message}
+              </p>
+            )}
+          </div>
+          <div className="text-sm">
+            <label
+              htmlFor="climatisation"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Climatisation
+            </label>
+            <select
+              id="climatisation"
+              {...register("climatisation")}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Climatisation</option>
+              {["Climatisé", "Non climatisé"].map((brand, index) => (
+                <option value={brand} key={index}>
+                  {brand}
+                </option>
+              ))}
+            </select>
+            {errors.typeMoteur && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.climatisation?.message}
               </p>
             )}
           </div>

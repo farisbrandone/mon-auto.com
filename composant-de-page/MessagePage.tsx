@@ -62,7 +62,7 @@ export default function MessagePage() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="max-w-[500px] mx-auto p-4 pb-1 loginShaddow max-sm:mt-40 mb-2 rounded-lg"
+        className="max-w-[500px] mx-auto p-4 pb-1 loginShaddow max-sm:mt-20 mb-2 rounded-lg"
       >
         <div className="w-full ">
           <p className="w-full text-center text-[18px] font-[600] text-[#333333] mb-2 sm:mb-3 mt-2 ">

@@ -1,6 +1,7 @@
 "use client";
 
 import { sendContact } from "@/app/actions/actions";
+import { CardDescription } from "@/components/CardDescription";
 import Footer from "@/components/Footer";
 import HeaderCars from "@/components/HeaderCars";
 import { DoubleBack } from "@/components/icon/DoubleBack";
@@ -446,6 +447,12 @@ function CarsDetails() {
                     </p>
                     <p>{auto.id}</p>
                   </div>
+                  {auto.climatisation && (
+                    <div className="flex items-center gap-2">
+                      <span className="icon-[iconoir--air-conditioner]"></span>
+                      <p>{auto.climatisation}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -461,6 +468,11 @@ function CarsDetails() {
               </p>
             </div>
           )}
+
+          {auto.descriptionAuto && (
+            <CardDescription descriptionAuto={auto.descriptionAuto} />
+          )}
+
           {
             <div className="w-full mt-4 border-[1px] border-solid border-[#33333359] shadow-2xl rounded-md ">
               <p className="w-full text-center text-[16px] font-[600] text-[#333333] mb-2 mt-2 ">

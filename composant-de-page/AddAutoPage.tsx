@@ -211,10 +211,10 @@ export default function AddAutoPage() {
         localStorage.getItem("mon-auto-token") as string
       );
       console.log(token);
-      if (!data.carteGrise || !data.pvControleTechnique || !data.imagesAuto) {
-        alert(
-          "vérifier l'insertion des fichiers carte grise, pv controle technique et images de l'auto"
-        );
+      if (
+        /* !data.carteGrise || !data.pvControleTechnique || */ !data.imagesAuto
+      ) {
+        alert("vérifier l'insertion des fichiers images de l'auto");
         return;
       }
 
@@ -274,11 +274,17 @@ export default function AddAutoPage() {
       formData.set("statusOfAuto", data.statusOfAuto);
       formData.set(
         "pvControleTechnique",
-        downloadUrlPv?.url + "--" + downloadUrlPv?.originalName
+        data.pvControleTechnique
+          ? downloadUrlPv?.url + "--" + downloadUrlPv?.originalName
+          : ""
       );
       formData.set(
         "carteGrise",
-        downloadUrlCartegrise?.url + "--" + downloadUrlCartegrise?.originalName
+        data.carteGrise
+          ? downloadUrlCartegrise?.url +
+              "--" +
+              downloadUrlCartegrise?.originalName
+          : ""
       );
       formData.set(
         "anneeDeFabrication",
@@ -292,6 +298,14 @@ export default function AddAutoPage() {
       formData.set(
         "immatriculation",
         data.immatriculation ? data.immatriculation : ""
+      );
+      formData.set(
+        "descriptionAuto",
+        data.descriptionAuto ? data.descriptionAuto : ""
+      );
+      formData.set(
+        "climatisation",
+        data.climatisation ? data.climatisation : ""
       );
 
       if (uploadProgressMultiple) {
@@ -476,14 +490,14 @@ export default function AddAutoPage() {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto my-10 p-6 bg-white font-playfair">
+    <div className="max-w-2xl mx-auto  my-10 p-6 bg-white font-playfair">
       <MyLogo />
       <ScrollToTopButton />
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className=" mx-auto bg-white p-5 rounded-lg loginShaddow mt-14"
+        className=" mx-auto bg-white p-5 rounded-lg loginShaddow mt-8 sm:mt-12"
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 ">
           {/* Spécialisations */}
@@ -497,7 +511,7 @@ export default function AddAutoPage() {
                 htmlFor="mymarque"
                 className="block text-sm font-medium text-gray-700"
               >
-                Marque de l'auto *
+                Marque de l'auto
               </label>
               <select
                 id="mymarque"
@@ -535,7 +549,7 @@ export default function AddAutoPage() {
                 htmlFor="mymodels"
                 className="block text-sm font-medium text-gray-700"
               >
-                Model associé à la marque choisis *
+                Model associé à la marque choisis
               </label>
               <input
                 type="text"
@@ -615,7 +629,7 @@ export default function AddAutoPage() {
                 htmlFor="mytypescarburant"
                 className="block text-sm font-medium text-gray-700"
               >
-                Type de carburant *
+                Type de carburant
               </label>
               <select
                 id="mytypescarburant"
@@ -642,7 +656,7 @@ export default function AddAutoPage() {
                 htmlFor="typeTransmission"
                 className="block text-sm font-medium text-gray-700"
               >
-                Type de transmission *
+                Type de transmission
               </label>
               <select
                 id="typeTransmission"
@@ -668,7 +682,7 @@ export default function AddAutoPage() {
                 htmlFor="typeMoteur"
                 className="block text-sm font-medium text-gray-700"
               >
-                Type de moteur *
+                Type de moteur
               </label>
               <select
                 id="typeMoteur"
@@ -743,7 +757,7 @@ export default function AddAutoPage() {
                   htmlFor="price"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  À quel prix vendez-vous *
+                  À quel prix vendez-vous
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
@@ -868,7 +882,7 @@ export default function AddAutoPage() {
                 htmlFor="mileage"
                 className="block text-sm font-medium text-gray-700"
               >
-                Kilométrage *
+                Kilométrage
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <input
@@ -1001,7 +1015,7 @@ export default function AddAutoPage() {
                 htmlFor="nbreDePlace"
                 className="block text-sm font-medium text-gray-700"
               >
-                nombre de place de l'auto *
+                nombre de place de l'auto
               </label>
               <input
                 type="number"
@@ -1025,7 +1039,7 @@ export default function AddAutoPage() {
                 htmlFor="nbreDePorte"
                 className="block text-sm font-medium text-gray-700"
               >
-                nombre de portière de l'auto *
+                nombre de portière de l'auto
               </label>
               <input
                 type="number"
@@ -1046,7 +1060,7 @@ export default function AddAutoPage() {
           </div>
 
           {/* Champ pour le logo de l'entreprise */}
-          <div>
+          {/*   <div>
             <label className="block text-sm font-medium text-gray-700">
               Insérer la Carte grise du véhicule
             </label>
@@ -1068,22 +1082,18 @@ export default function AddAutoPage() {
               ) : (
                 <div className="flex flex-col items-center">
                   <div className="flex text-sm text-gray-600">
-                    {/*  <label
-                      htmlFor="carteGrise"
-                      className="relative cursor-pointer rounded-md  font-medium text-blue-600 hover:text-blue-500 bg-slate-200 p-2"
-                    > */}
-                    {/*  <span>Télécharger un fichier</span> */}
+                  
                     <input
                       id="carteGrise"
                       type="file"
-                      /* accept="image/jpeg, image/png, image/webp" */
+                      
                       className="sr-only"
                       ref={fileInputRef2Carte}
                       onChange={(e) => {
                         handleFileCarteGrise(e);
                       }}
                     />
-                    {/*  </label> */}
+                   
                     <button
                       type="button"
                       onClick={() => {
@@ -1126,10 +1136,10 @@ export default function AddAutoPage() {
                 {errors.carteGrise.message}
               </p>
             )}
-          </div>
+          </div> */}
 
           {/* Champ pour le pv de controle technique  */}
-          <div>
+          {/*   <div>
             <label className="block text-sm font-medium text-gray-700">
               Insérer le Procès verbal du controle technique du véhicule
             </label>
@@ -1151,22 +1161,18 @@ export default function AddAutoPage() {
               ) : (
                 <div className="flex flex-col items-center">
                   <div className="flex text-sm text-gray-600">
-                    {/*  <label
-                      htmlFor="pvControleTechnique"
-                      className="relative cursor-pointer rounded-md bg-slate-200 p-2 font-medium text-blue-600 hover:text-blue-500"
-                    >
-                      <span>Télécharger un fichier</span> */}
+                   
                     <input
                       id="pvControleTechnique"
                       type="file"
-                      /* accept="image/jpeg, image/png, image/webp" */
+                    
                       className="sr-only"
                       ref={fileInputRefPv}
                       onChange={(e) => {
                         handleFilePv(e);
                       }}
                     />
-                    {/*  </label> */}
+                   
                     <button
                       type="button"
                       onClick={() => {
@@ -1209,15 +1215,61 @@ export default function AddAutoPage() {
                 {errors.pvControleTechnique.message}
               </p>
             )}
+          </div> */}
+
+          <div className="text-sm">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Description du véhicule
+            </label>
+            <textarea
+              id="description"
+              {...register("descriptionAuto")}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Décrit le véhicule avec tes propres mots"
+            />
+            {errors.immatriculation && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.descriptionAuto?.message}
+              </p>
+            )}
+          </div>
+          <div className="text-sm">
+            <label
+              htmlFor="climatisation"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Climatisation
+            </label>
+            <select
+              id="climatisation"
+              {...register("climatisation")}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Climatisation</option>
+              {["Climatisé", "Non climatisé"].map((brand, index) => (
+                <option value={brand} key={index}>
+                  {brand}
+                </option>
+              ))}
+            </select>
+            {errors.typeMoteur && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.climatisation?.message}
+              </p>
+            )}
           </div>
 
           {/* Champ pour plusieurs images de voitures */}
+
           <div>
             <label
               htmlFor="imagesAuto"
               className="block text-sm font-medium text-gray-700"
             >
-              Insérer des Images du véhicules (max 8) *
+              Insérer des Images du véhicules (max 8)
             </label>
             <input
               id="imagesAuto"
@@ -1292,7 +1344,7 @@ export default function AddAutoPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-[14px] sm:text-[16px] font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSubmit(onSubmit)}
             >
               {isSubmitting ? "Enregistrement en cours..." : "Ajouter"}
@@ -1303,7 +1355,7 @@ export default function AddAutoPage() {
           <button
             type="button"
             disabled={isSubmitting}
-            className="mt-2 w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-red-400 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
+            className="mt-2 w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-[14px] sm:text-[16px] font-medium text-white bg-red-400 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
             onClick={() => router.push("/cars")}
           >
             Retour à l'accueil

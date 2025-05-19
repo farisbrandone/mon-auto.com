@@ -12,7 +12,7 @@ import Image from "next/image";
 function HeaderCars() {
   const router = useRouter();
   return (
-    <div className=" fixed top-0 left-0 p-2 border-b-gray-950 border-solid border shadow-2xs z-100000000000 font-playfair flex items-center justify-between w-full bg-[#333333] px-4 py-1 sm:py-2">
+    <div className=" fixed top-0 left-0 p-2 border-b-gray-950 border-solid border shadow-2xs z-10000 font-playfair flex items-center justify-between w-full bg-[#333333] px-4 py-1 sm:py-2">
       <div
         className="w-[40px] h-[40px] flex items-center justify-center cursor-pointer "
         title="Envoyez-nous un message"
