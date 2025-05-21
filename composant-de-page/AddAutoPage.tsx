@@ -112,7 +112,7 @@ export default function AddAutoPage() {
     setValue("couleurInt", value);
   };
 
-  const removeFile = async (fileName: string, index: number) => {
+  const removeFile = async (fileName: string, name: string, index: number) => {
     try {
       if (!localStorage.getItem("mon-auto-token")) {
         router.push("/seller-signup");
@@ -132,9 +132,10 @@ export default function AddAutoPage() {
         const newFiles = [...images_auto];
         newFiles.splice(index, 1);
         setValue("imagesAuto", newFiles);
-        setUploadProgressMultiple((prev) =>
-          prev.filter((item) => item.fileName !== fileName)
-        );
+        console.log({ fileName, uploadProgressMultiple });
+        setUploadProgressMultiple([
+          ...uploadProgressMultiple.filter((item) => item.fileName !== name),
+        ]);
       }
     } catch (error) {
       throw error;

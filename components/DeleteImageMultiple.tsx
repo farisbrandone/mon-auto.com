@@ -17,7 +17,7 @@ interface DeleteImageMultipleProps {
   images_auto: File[];
   setValue: UseFormSetValue<SellerFormData>;
   setUploadProgressMultiple: (value: SetStateAction<UploadProgress[]>) => void;
-  removeFiles: (fileName: string, index: number) => Promise<void>;
+  removeFiles: (fileName: string, name: string, index: number) => Promise<void>;
 }
 
 export default function DeleteImageMultiple({
@@ -31,10 +31,10 @@ export default function DeleteImageMultiple({
   const [loadingDelete, setLoadingDelete] = useState(false);
   const router = useRouter();
 
-  const removeFile = async (fileName: string, index: number) => {
+  const removeFile = async (fileName: string, name: string, index: number) => {
     try {
       setLoadingDelete(true);
-      await removeFiles(fileName, index);
+      await removeFiles(fileName, name, index);
       toast.success("l'image a été supprimé avec success");
       setLoadingDelete(false);
     } catch (error) {
@@ -56,7 +56,9 @@ export default function DeleteImageMultiple({
           />
           <button
             type="button"
-            onClick={() => removeFile(item.downloadUrl as string, index)}
+            onClick={() =>
+              removeFile(item.downloadUrl as string, item.fileName, index)
+            }
             className="absolute w-[30px] h-[30px] top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 flex items-center justify-center disabled:bg-red-300 disabled:opacity-90"
             disabled={loadingDelete}
           >
