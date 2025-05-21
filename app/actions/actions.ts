@@ -11,7 +11,7 @@ export async function registerSeller(formData: FormData) {
   let carte_grise = formData.get("carteGrise") as any;
   let pv_controle_technique = formData.get("pvControleTechnique") as any;
   const size = formData.get("size_image");
-  console.log(size);
+
   const images_auto: any[] = [];
   if (size && Number(size) !== 0) {
     for (let i = 0; i < Number(size); i++) {
@@ -111,7 +111,6 @@ export async function registerSeller(formData: FormData) {
 
         // Handle specific status codes
         if (error.response.status === 401) {
-          console.log("dd, dd");
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
             const response = await axios.get(`${baseUrl}/refreshToken`, {
@@ -119,11 +118,10 @@ export async function registerSeller(formData: FormData) {
                 Authorization: `Bearer ${refreshToken}`,
               },
             });
-            console.log(response.data);
+
             /*  const val = JSON.stringify(response.data);
             localStorage.setItem("mon-auto-token", val); */
-            console.log("toto");
-            console.log({ token: response.data["access-token"] });
+
             rawData.userToken = response.data["access-token"];
             const response2 = await axios.post(`${baseUrl}/addAuto`, rawData, {
               headers: {
@@ -133,7 +131,6 @@ export async function registerSeller(formData: FormData) {
             });
 
             if (response2.status === 200) {
-              console.log("Oups on a reussie");
               return {
                 success: true,
                 data: response2.data,
@@ -141,7 +138,6 @@ export async function registerSeller(formData: FormData) {
                 token: response.data,
               };
             } else {
-              console.log({ zouk: response2.data });
             }
           } catch (error) {
             console.log(error);
@@ -174,7 +170,7 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
   let carte_grise = formData.get("carteGrise");
   let pv_controle_technique = formData.get("pvControleTechnique");
   const size = formData.get("size_image");
-  console.log(size);
+
   const images_auto: imageType[] = [];
   if (size && Number(size) !== 0) {
     for (let i = 0; i < Number(size); i++) {
@@ -254,8 +250,6 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
     climatisation: formData.get("climatisation"),
   };
 
-  console.log(rawData);
-
   try {
     const response = await axios.put(`${baseUrl}/updateAuto`, rawData, {
       headers: {
@@ -310,8 +304,7 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
-            // redirect("/seller-login");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
@@ -336,10 +329,8 @@ export async function getsearchAutoData(url: string): Promise<any> {
   try {
     const response = await axios.get(url);
 
-    console.log(response.data.content);
     return response.data;
   } catch (error) {
-    console.log("toutou");
     console.log(error);
   }
 }
@@ -355,8 +346,6 @@ export async function sendContact(formData: FormData) {
 
   try {
     const response = await axios.post(`${baseUrl}/sendContact`, data);
-
-    console.log({ contactStatus: response.status });
 
     if (response.status === 200) {
       return { success: true, error: null };
@@ -383,7 +372,7 @@ export const getDataAsync = async (token: any) => {
     const data = response.data;
 
     const newAutos = data._embedded.sellers;
-    console.log(newAutos[0]._links.autos);
+
     if (response.status === 200) {
       return { success: true, data: newAutos, error: null, token: null };
     } else {
@@ -405,7 +394,6 @@ export const getDataAsync = async (token: any) => {
 
         // Handle specific status codes
         if (error.response.status === 401) {
-          console.log("dd, dd");
           // Handle unauthorized (e.g., refresh token or redirect to login)
           try {
             const response = await axios.get(`${baseUrl}/refreshToken`, {
@@ -425,7 +413,7 @@ export const getDataAsync = async (token: any) => {
               const data = response2.data;
 
               const newAutos = data._embedded.sellers;
-              console.log(newAutos[0]._links.autos);
+
               return {
                 success: true,
                 data: newAutos,
@@ -473,7 +461,6 @@ export const getUserDataAsync = async (token: any, userId: string) => {
     const data = response.data;
 
     const newAutos = data._embedded.autos;
-    console.log(newAutos[0]);
 
     if (response.status === 200) {
       return { success: true, data: newAutos, error: null, token: null };
@@ -507,8 +494,6 @@ export const getUserDataAsync = async (token: any, userId: string) => {
             /*  const val = JSON.stringify(response.data);
                 localStorage.setItem("mon-auto-token", val); */
 
-            console.log({ token: response.data["access-token"] });
-
             const response2 = await axios.get(
               `${baseUrl}/sellers/${userId}/autos`,
               {
@@ -523,7 +508,6 @@ export const getUserDataAsync = async (token: any, userId: string) => {
               const data = response2.data;
 
               const newAutos = data._embedded.autos;
-              console.log(newAutos[0]);
 
               return {
                 success: true,
@@ -565,7 +549,6 @@ export const getAutoDataAsync = async (page: number) => {
 
     const newAutos = data._embedded;
     const pageData = data.page;
-    console.log(pageData);
 
     if (response.status === 200) {
       return {
@@ -615,8 +598,6 @@ export const getImageAuto = async (autoId: string) => {
 
       return { id: dodo, url: val.url };
     });
-
-    console.log(data);
 
     if (response.status === 200) {
       return {
@@ -688,7 +669,7 @@ export const deleteSellerUser = async (id: string, token: any) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
@@ -704,7 +685,6 @@ export const deleteSellerUser = async (id: string, token: any) => {
 };
 
 export const deleteImage = async (id: string, token: any) => {
-  console.log(token["access-token"]);
   try {
     const response = await axios.delete(`${baseUrl}/deleteImageAuto/${id}`, {
       headers: {
@@ -758,7 +738,7 @@ export const deleteImage = async (id: string, token: any) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
@@ -824,7 +804,7 @@ export const deleteSellerAuto = async (id: string, token: any) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
@@ -895,7 +875,7 @@ export const getSingleUserDataAsync = async (autoId: string, token: any) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
@@ -913,7 +893,7 @@ export const getSingleUserDataAsync = async (autoId: string, token: any) => {
 export const confirmAction = async (token: string) => {
   try {
     const response = await axios.get(`${baseUrl}/confirm?token=${token}`);
-    console.log({ status: response.status, data: response.data });
+
     return { status: response.status };
   } catch (error) {
     throw error;
@@ -959,7 +939,7 @@ export const deleteFile = async (token: any, fileName: string) => {
                 Authorization: `Bearer ${token["refresh-token"]}`,
               },
             });
-            console.log(response.data["access-token"]);
+
             const response2 = await axios.delete(
               `${baseUrl}/deleteFile?fileName=${fileName}`,
 
@@ -970,9 +950,8 @@ export const deleteFile = async (token: any, fileName: string) => {
                 },
               }
             );
-            console.log("toutou");
+
             if (response2.status === 200) {
-              console.log("nounou");
               return {
                 success: true,
                 data: response2.data,
@@ -984,7 +963,7 @@ export const deleteFile = async (token: any, fileName: string) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
@@ -1000,7 +979,6 @@ export const deleteFile = async (token: any, fileName: string) => {
 };
 
 export const uploadFile = async (token: any, formData: FormData) => {
-  console.log(token);
   try {
     const response = await axios.post(`${baseUrl}/uploadFile`, formData, {
       headers: {
@@ -1008,7 +986,7 @@ export const uploadFile = async (token: any, formData: FormData) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(response);
+
     return { success: true, error: null, data: response.data, token: null };
   } catch (error) {
     let myError = "";
@@ -1025,7 +1003,7 @@ export const uploadFile = async (token: any, formData: FormData) => {
                 Authorization: `Bearer ${token["refresh-token"]}`,
               },
             });
-            console.log(response.data["access-token"]);
+
             const response2 = await axios.post(
               `${baseUrl}/uploadFile`,
               formData,
@@ -1036,9 +1014,8 @@ export const uploadFile = async (token: any, formData: FormData) => {
                 },
               }
             );
-            console.log("toutou");
+
             if (response2.status === 200) {
-              console.log("nounou");
               return {
                 success: true,
                 data: response2.data,
@@ -1051,7 +1028,7 @@ export const uploadFile = async (token: any, formData: FormData) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
@@ -1090,7 +1067,7 @@ export const uploadMultipleFile = async (token: any, formData: FormData) => {
                 Authorization: `Bearer ${token["refresh-token"]}`,
               },
             });
-            console.log(response.data["access-token"]);
+
             const response2 = await axios.post(
               `${baseUrl}/upload-multiple`,
               formData,
@@ -1101,9 +1078,8 @@ export const uploadMultipleFile = async (token: any, formData: FormData) => {
                 },
               }
             );
-            console.log("toutou");
+
             if (response2.status === 200) {
-              console.log("nounou");
               return {
                 success: true,
                 data: response2.data,
@@ -1115,7 +1091,7 @@ export const uploadMultipleFile = async (token: any, formData: FormData) => {
             }
           } catch (error) {
             console.log(error);
-            throw new Error("");
+            redirect("/seller-login");
           }
         }
       } else if (error.request) {
