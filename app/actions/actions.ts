@@ -306,7 +306,7 @@ export const updateSellerAuto = async (formData: FormData, id: string) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
             }
           } catch (error) {
             console.log(error);
@@ -684,7 +684,7 @@ export const deleteSellerUser = async (id: string, token: any) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
             }
           } catch (error) {
             console.log(error);
@@ -754,7 +754,7 @@ export const deleteImage = async (id: string, token: any) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
             }
           } catch (error) {
             console.log(error);
@@ -820,7 +820,7 @@ export const deleteSellerAuto = async (id: string, token: any) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
             }
           } catch (error) {
             console.log(error);
@@ -891,7 +891,7 @@ export const getSingleUserDataAsync = async (autoId: string, token: any) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
             }
           } catch (error) {
             console.log(error);
@@ -980,7 +980,7 @@ export const deleteFile = async (token: any, fileName: string) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
             }
           } catch (error) {
             console.log(error);
@@ -1000,6 +1000,7 @@ export const deleteFile = async (token: any, fileName: string) => {
 };
 
 export const uploadFile = async (token: any, formData: FormData) => {
+  console.log(token);
   try {
     const response = await axios.post(`${baseUrl}/uploadFile`, formData, {
       headers: {
@@ -1045,7 +1046,8 @@ export const uploadFile = async (token: any, formData: FormData) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
+              //throw new Error("");
             }
           } catch (error) {
             console.log(error);
@@ -1109,7 +1111,7 @@ export const uploadMultipleFile = async (token: any, formData: FormData) => {
                 token: response.data,
               };
             } else {
-              throw new Error("");
+              redirect("/seller-login");
             }
           } catch (error) {
             console.log(error);
