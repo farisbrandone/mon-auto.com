@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import React, { SetStateAction, useState } from "react";
 import { UseFormSetValue } from "react-hook-form";
 import { toast } from "sonner";
+import { EosIconsLoading } from "./Spinner";
 
 interface DeleteImageMultipleProps {
   item: UploadProgress;
@@ -16,6 +17,7 @@ interface DeleteImageMultipleProps {
   images_auto: File[];
   setValue: UseFormSetValue<SellerFormData>;
   setUploadProgressMultiple: (value: SetStateAction<UploadProgress[]>) => void;
+  removeFiles: (fileName: string, index: number) => Promise<void>;
 }
 
 export default function DeleteImageMultiple({
@@ -24,6 +26,7 @@ export default function DeleteImageMultiple({
   images_auto,
   setValue,
   setUploadProgressMultiple,
+  removeFiles,
 }: DeleteImageMultipleProps) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const router = useRouter();
@@ -31,29 +34,8 @@ export default function DeleteImageMultiple({
   const removeFile = async (fileName: string, index: number) => {
     try {
       setLoadingDelete(true);
-      if (!localStorage.getItem("mon-auto-token")) {
-        router.push("/seller-signup");
-      }
-      const token = JSON.parse(
-        localStorage.getItem("mon-auto-token") as string
-      );
-      const response = await deleteFile(token, fileName);
-
-      if (response.success) {
-        if (response.token) {
-          console.log("lolo");
-          const val = JSON.stringify(response.token);
-          localStorage.setItem("mon-auto-token", val);
-        }
-
-        const newFiles = [...images_auto];
-        newFiles.splice(index, 1);
-        setValue("imagesAuto", newFiles);
-        setUploadProgressMultiple((prev) =>
-          prev.filter((item) => item.fileName !== fileName)
-        );
-        toast.success("l'image a été supprimé avec success");
-      }
+      await removeFiles(fileName, index);
+      toast.success("l'image a été supprimé avec success");
       setLoadingDelete(false);
     } catch (error) {
       setLoadingDelete(false);
@@ -80,7 +62,7 @@ export default function DeleteImageMultiple({
           >
             {""}
             {loadingDelete ? (
-              <LoaderCircleIcon className="text-white " />
+              <EosIconsLoading color="white" />
             ) : (
               <CrossIcon className="text-white" />
             )}

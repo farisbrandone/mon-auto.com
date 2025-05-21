@@ -112,6 +112,35 @@ export default function AddAutoPage() {
     setValue("couleurInt", value);
   };
 
+  const removeFile = async (fileName: string, index: number) => {
+    try {
+      if (!localStorage.getItem("mon-auto-token")) {
+        router.push("/seller-signup");
+      }
+      const token = JSON.parse(
+        localStorage.getItem("mon-auto-token") as string
+      );
+      const response = await deleteFile(token, fileName);
+
+      if (response.success) {
+        if (response.token) {
+          console.log("lolo");
+          const val = JSON.stringify(response.token);
+          localStorage.setItem("mon-auto-token", val);
+        }
+
+        const newFiles = [...images_auto];
+        newFiles.splice(index, 1);
+        setValue("imagesAuto", newFiles);
+        setUploadProgressMultiple((prev) =>
+          prev.filter((item) => item.fileName !== fileName)
+        );
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const handleFilePv = async (e: ChangeEvent<HTMLInputElement>) => {
     //beginning get url of pv
     const mm = e.target.files;
@@ -1300,6 +1329,7 @@ export default function AddAutoPage() {
                   images_auto={images_auto}
                   setUploadProgressMultiple={setUploadProgressMultiple}
                   setValue={setValue}
+                  removeFiles={removeFile}
                 />
               ))}
             </div>
